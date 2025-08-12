@@ -5,3 +5,31 @@ node_modules
 mapvn
 flask_session
 venv
+
+# === Terraform ===
+*.tfstate
+*.tfstate.*
+.crash
+*.log
+*.backup
+.terraform/
+.terraform.lock.hcl
+
+# === Env files ===
+.env
+.env*
+*.tfvars
+*.tfvars.json
+key.json
+
+# === IDE / Editor files ===
+.vscode/
+.idea/
+*.swp
+*~
+
+# === OS / Misc ===
+.DS_Store
+Thumbs.db
+# === Private Key ===
+id_rsa_*
