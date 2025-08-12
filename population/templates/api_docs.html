@@ -1,0 +1,76 @@
+{% extends "base.html" %} {% block title %}Hướng dẫn API - Quản lý Dân Số{%
+endblock %} {% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">📘 Hướng dẫn Sử dụng API</h1>
+
+  <p>
+    Hệ thống cung cấp API để truy cập dữ liệu dân số Việt Nam. Bạn có thể sử
+    dụng các endpoint dưới đây để lấy thông tin.
+  </p>
+
+  <h2 class="mt-4">📌 1. Lấy Dữ liệu Dân Số Theo Năm</h2>
+  <pre class="bg-light p-3 border rounded">GET /api/users/population?year=2020</pre>
+  <p>
+    <strong>Mô tả:</strong> Lấy thông tin dân số của Việt Nam theo từng năm.
+  </p>
+  <p><strong>Tham số:</strong> <code>year</code> (tùy chọn, mặc định: 2021)</p>
+  <p><strong>Ví dụ:</strong></p>
+  <pre class="bg-light p-3 border rounded">
+    $token = "Bearer your-token"
+    $year = "2021"
+    $url = `https://api.vnpop.thonh.site/api/users/population?year=$year`
+        
+    curl -H "Authorization: $token" "$url"
+        
+    </pre
+  >
+  <h2 class="mt-4">📌 2. Lấy Dữ liệu Dân Số Theo Tỉnh</h2>
+  <pre class="bg-light p-3 border rounded">GET /api/users/population?province=Vĩnh%20Long</pre>
+  <p>
+    <strong>Mô tả:</strong> Lấy thông tin dân số Tỉnh theo từng năm.
+  </p>
+  <p><strong>Tham số:</strong> <code>province</code> (tùy chọn, mặc định: Vĩnh%20Long)</p>
+  <p><strong>Ví dụ:</strong></p>
+  <pre class="bg-light p-3 border rounded">
+    $token = "Bearer your-token"
+    $province = "Vĩnh%20Long"
+    $url = `https://api.vnpop.thonh.site/api/users/population?province=$province`
+        
+    curl -H "Authorization: $token" "$url"
+        
+    </pre
+  >  
+  
+  <h2 class="mt-4">📌 3. Đăng ký Người Dùng(Deploying)</h2>
+  <pre class="bg-light p-3 border rounded">POST /api/users/register</pre>
+  <p><strong>Body (JSON):</strong></p>
+  <pre class="bg-light p-3 border rounded">
+{
+  "full_name": "Nguyễn Văn A",
+  "email": "user@example.com",
+  "password": "123456"
+}
+    </pre
+  >
+
+  <h2 class="mt-4">📌 4. Đăng nhập Người Dùng (Deploying)</h2>
+  <pre class="bg-light p-3 border rounded">POST /api/users/login</pre>
+  <p><strong>Body (JSON):</strong></p>
+  <pre class="bg-light p-3 border rounded">
+{
+  "email": "user@example.com",
+  "password": "123456"
+}
+    </pre
+  >
+
+  <h2 class="mt-4">📌 5. Lấy Thông Tin Người Dùng (Deploying)</h2>
+  <pre class="bg-light p-3 border rounded">GET /api/users/profile</pre>
+  <p><strong>Mô tả:</strong> Lấy thông tin của người dùng đã đăng nhập.</p>
+  <p><strong>Header:</strong> <code>Authorization: Bearer [TOKEN]</code></p>
+</div>
+{% endblock %}
+
+<script>
+  let API_HOST = CONFIG.API_HOST;
+</script>

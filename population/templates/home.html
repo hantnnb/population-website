@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Trang Chủ{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">Bản đồ Dân số Việt Nam</h1>
+    <form method="GET">
+        <label for="year">Chọn năm:</label>
+        <select name="year" id="year" onchange="this.form.submit()">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <div class="mt-3">
+        {{ map_html|safe }}
+    </div>
+{% endblock %}

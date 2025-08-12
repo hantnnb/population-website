@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% block title %}Đăng Nhập{% endblock %} {% block
+content %}
+<h1 class="text-center">Đăng nhập</h1>
+<form id="loginForm">
+  <input
+    type="email"
+    id="email"
+    placeholder="Email"
+    class="form-control mb-2"
+    required
+  />
+  <input
+    type="password"
+    id="password"
+    placeholder="Mật khẩu"
+    class="form-control mb-2"
+    required
+  />
+  <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+</form>
+
+<script>
+  document
+    .getElementById("loginForm")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault(); // Ngăn form reload trang
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch(
+          `https://api.vnpop.thonh.site/api/users/login`,
+          {
+            // ⚠️ Đổi đúng cổng Node.js
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          alert("Đăng nhập thành công!");
+          //localStorage.setItem("token", data.token); // ✅ Lưu token vào localStorage
+          localStorage.setItem("token", `Bearer ${data.token}`);
+          if (data.role == "admin") {
+            window.location.href = "/population"; // 🔄 Chuyển hướng tới trang Profil
+          } else {
+            window.location.href = "/profile"; // 🔄 Chuyển hướng tới trang Profile
+          }
+        } else {
+          alert("Lỗi: " + data.message);
+        }
+      } catch (error) {
+        alert("Lỗi kết nối đến server!");
+        console.error(error);
+      }
+    });
+
+  // ✅ Gửi request lấy thông tin user
+  async function fetchProfile() {
+    const token = localStorage.getItem("token"); // 📌 Lấy token từ localStorage
+    if (!token) {
+      alert("Bạn chưa đăng nhập!");
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.vnpop.thonh.site/api/users/profile`,
+        {
+          // ⚠️ Đổi đúng cổng API
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token, // ✅ Gửi token trong Header
+          },
+        }
+      );
+
+      const user = await response.json();
+      if (response.ok) {
+        document.getElementById(
+          "userInfo"
+        ).innerText = `Xin chào, ${user.full_name}`;
+      } else {
+        alert("Lỗi: " + user.message);
+        localStorage.removeItem("token"); // ❌ Xóa token nếu lỗi
+        window.location.href = "/login";
+      }
+    } catch (error) {
+      alert("Lỗi kết nối đến server!");
+      console.error(error);
+    }
+  }
+
+  // 📌 Gọi API profile khi mở trang Profile
+  if (window.location.pathname === "/profile") {
+    fetchProfile();
+  }
+</script>
+
+{% endblock %}
