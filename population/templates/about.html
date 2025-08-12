@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %}Giới thiệu - Quản lý dân số Việt
+Nam{% endblock %} {% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <h1 class="mb-4">Quản lý dân số Việt Nam</h1>
+      <p>
+        Hệ thống quản lý dân số giúp theo dõi sự thay đổi dân số, phân tích dữ
+        liệu nhân khẩu học và cung cấp các công cụ hỗ trợ quyết định chính sách
+        cho chính phủ, doanh nghiệp và tổ chức.
+      </p>
+      <p>
+        Dữ liệu được tổng hợp từ các nguồn chính thống như Tổng cục Thống kê,
+        các báo cáo nhân khẩu học và hệ thống quản lý dân cư.
+      </p>
+      <p>
+        API của chúng tôi cung cấp quyền truy cập vào thông tin dân số theo từng
+        năm, khu vực và các chỉ số quan trọng khác.
+      </p>
+      <a href="/api/docs" class="btn btn-primary" target="_blank">Xem API</a>
+    </div>
+    <div class="col-md-6">
+      <img
+        src="https://nhn.1cdn.vn/2024/05/29/3.png"
+        alt="Biểu đồ dân số Việt Nam"
+        class="img-fluid rounded shadow"
+      />
+    </div>
+  </div>
+</div>
+{% endblock %}

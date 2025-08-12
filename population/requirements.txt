@@ -1,0 +1,9 @@
+Flask
+Flask-PyMongo
+Flask-Session
+dash
+geopandas
+plotly
+gunicorn
+python-dotenv
+flask_cors
