@@ -64,8 +64,8 @@ sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
 # Frontend (Flask app)
 cat <<EOF > /etc/nginx/sites-available/pplt-dev
 server {
-    listen 80 default_server;
-    server_name _;
+    listen 80;
+    server_name pplt-dev.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5000;
@@ -81,7 +81,7 @@ EOF
 cat <<EOF > /etc/nginx/sites-available/api
 server {
     listen 80;
-    server_name _;
+    server_name api.pplt-dev.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5001;
