@@ -93,7 +93,7 @@ server {
 EOF
 
 # Activate both configs
-ln -sf /etc/nginx/sites-available/population /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/pplt-dev
 ln -sf /etc/nginx/sites-available/api /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 

@@ -1,5 +1,5 @@
 // const CONFIG = {
-//   API_HOST: "https://api.pplt.vitlab.site", // Change this when needed
+//   API_HOST: "https://api.pplt-dev.vitlab.site", // Change this when needed
 // };
 
 // export default CONFIG;
