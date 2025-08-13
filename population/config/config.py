@@ -13,10 +13,13 @@ class Config:
 
     # Cấu hình MongoDB
     MONGO_URI = os.getenv("MONGO_URI")
-    DATABASE_NAME = "vietnam"
-    POPULATION_COLLECTION = "population"
-    # Kết nối MongoDB
-    NEWS_COLLECTION = "news"
+    DATABASE_NAME = os.getenv("DATABASE_NAME")
+    POPULATION_COLLECTION = os.getenv("POPULATION_COLLECTION")
+    NEWS_COLLECTION = os.getenv("NEWS_COLLECTION")
+
+    # Cấu hình API
+    API_HOST = os.getenv("API_HOST")
+
     # Sửa SESSION_TYPE từ null thành một giá trị hợp lệ
     # Các giá trị hợp lệ: 'filesystem', 'redis', 'memcached', 'mongodb'
     SESSION_TYPE = 'filesystem'
