@@ -64,7 +64,7 @@ sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
 # Frontend (Flask app)
 cat <<EOF > /etc/nginx/sites-available/pplt-dev
 server {
-    listen 80;
+    listen 80 default_server;
     server_name pplt-dev.vitlab.site;
 
     location / {
