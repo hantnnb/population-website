@@ -29,7 +29,7 @@ curl -s -H "Metadata-Flavor: Google" \
   -o /opt/population-website/population/.env
 
 curl -s -H "Metadata-Flavor: Google" \
-  http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_file_backend \
+  http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_backend \
   -o /opt/population-website/population/backend/.env
 
 # Switch to ubuntu user
