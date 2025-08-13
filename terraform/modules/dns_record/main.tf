@@ -7,11 +7,11 @@ terraform {
   }
 }
 
-resource "cloudflare_record" "dns_record" {
+resource "cloudflare_dns_record" "dns_record" {
   zone_id = var.zone_id
   name    = var.name
-  content   = var.ip_address
+  content = var.ip_address
   type    = var.dns_type
   proxied = var.isProxied
-  ttl = var.ttl
+  ttl     = var.ttl
 }

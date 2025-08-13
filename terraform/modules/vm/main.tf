@@ -38,7 +38,7 @@ resource "google_compute_instance" "vm-instance" {
   }
 
   metadata = {
-    env_file = var.env_file
+    env_file    = var.env_file
     env_backend = var.env_backend
   }
 
