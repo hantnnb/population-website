@@ -80,7 +80,7 @@ module "client_dns" {
   zone_id    = var.zone_id
   isProxied  = true
   dns_type   = "A"
-  ttl        = 1
+  ttl        = 1 
   # When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.
 }
 
@@ -89,7 +89,7 @@ module "api_dns" {
   name       = "api.${local.name_prefix}"
   ip_address = module.vm.vm_ip
   zone_id    = var.zone_id
-  isProxied  = false
+  isProxied  = true
   dns_type   = "A"
-  ttl        = 300
+  ttl        = 1
 }

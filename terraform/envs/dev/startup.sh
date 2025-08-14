@@ -88,7 +88,7 @@ ln -s /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/
 cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site
 server {
     listen 80;
-    server_name api-dev.pplt-dev.vitlab.site;
+    server_name api.pplt-dev.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5001;
@@ -108,7 +108,7 @@ systemctl restart nginx
 certbot --nginx --non-interactive --agree-tos \
   -m han.tnnb@gmail.com \
   -d pplt-dev.vitlab.site \
-  -d api-dev.pplt-dev.vitlab.site
+  -d api.pplt-dev.vitlab.site
 
 # Add cron job for auto-renew
 (crontab -l 2>/dev/null; echo "0 2 * * * /usr/bin/certbot renew --quiet --deploy-hook 'systemctl reload nginx'") | crontab -
