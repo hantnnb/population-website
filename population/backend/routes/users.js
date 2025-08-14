@@ -43,7 +43,7 @@ router.post("/register", async (req, res) => {
 
   try {
     // Xác minh reCAPTCHA với Google
-    const secretKey = "6LdUk6UrAAAAAAlfl8SOssrPZDKPkYKyOHv-WGtZ"; // 🔹 Thay bằng Secret Key từ Google
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     const recaptchaVerifyUrl = "https://www.google.com/recaptcha/api/siteverify";
     
     const recaptchaRes = await axios.post(recaptchaVerifyUrl, null, {
