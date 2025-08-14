@@ -37,7 +37,7 @@ curl -s -H "Metadata-Flavor: Google" \
 # Chạy tất cả dưới quyền user ubuntu
 sudo -i -u ubuntu bash <<'EOF'
 # Tạo venv và cài Python packages
-cd /opt/population-website
+cd /opt/population-website/population
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
