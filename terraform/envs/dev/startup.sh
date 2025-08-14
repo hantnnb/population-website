@@ -66,9 +66,9 @@ sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
 apt-get install -y nginx
 
 # Create Nginx reverse proxy
-cat <<EOF > /etc/nginx/sites-available/pplt
+cat <<EOF > /etc/nginx/sites-available/pplt-dev
 server {
-    listen 80;
+    listen 80 default_server;
     server_name pplt-dev.vitlab.site;
 
     location / {
@@ -82,7 +82,7 @@ server {
 EOF
 
 # Active website site
-ln -s /etc/nginx/sites-available/pplt /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/
 
 # Create vhost for api.vnpop.thonh.site
 cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site

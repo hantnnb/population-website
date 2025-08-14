@@ -12,7 +12,7 @@ const app = express();
 //app.use(cors()); // ❌ Không giới hạn CORS (chỉ dùng khi debug)
 app.use(cors({ origin: "*" }));
 //app.use(cors({
-//    origin: "http://localhost:5000", // Cho phép Flask frontend truy cập
+//    origin: "https://pplt-dev.vitlab.site", // Cho phép Flask frontend truy cập
 //    credentials: true,  // Cho phép gửi cookies & headers
 //}));
 
