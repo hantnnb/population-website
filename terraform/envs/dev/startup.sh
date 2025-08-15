@@ -22,7 +22,7 @@ npm install -g pm2@latest
 
 # Cloning Code =================================================================================
 REPO_DIR="/opt/population-website"
-BRANCH="stg-test-new-script"
+BRANCH="stg"
 
 # Check if repo exists, clone if not, update if existed
 if [ ! -d "$REPO_DIR/.git" ]; then
