@@ -33,3 +33,5 @@ key.json
 Thumbs.db
 # === Private Key ===
 id_rsa_*
+github_actions_key
+github_actions_key.pub
