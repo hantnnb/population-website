@@ -44,7 +44,7 @@ resource "google_project_service" "services" {
   disable_on_destroy = false
 }
 
-# Network module
+# Network
 module "network" {
   source        = "../../modules/network"
   region        = var.region
@@ -54,6 +54,7 @@ module "network" {
   depends_on = [google_project_service.services]
 }
 
+# VM 
 module "vm" {
   source        = "../../modules/vm"
   name_prefix   = local.name_prefix
@@ -70,6 +71,11 @@ module "vm" {
   env_file     = var.env_file
   env_backend  = var.env_backend
 
+  # let the Terraform SA attach the VM SA
+  sa_user_members = [
+    "serviceAccount:terraform@population-website.iam.gserviceaccount.com"
+  ]
+
   depends_on = [google_project_service.services]
 }
 
@@ -80,7 +86,7 @@ module "client_dns" {
   zone_id    = var.zone_id
   isProxied  = true
   dns_type   = "A"
-  ttl        = 1 
+  ttl        = 1
   # When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.
 }
 
