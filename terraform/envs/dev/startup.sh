@@ -71,7 +71,7 @@ deactivate
 # Node backend deps - use package.json if exist, not overwrite
 if [ -d "$REPO_DIR/population/backend" ]; then
   cd "$REPO_DIR/population/backend"
-  if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
+  if [ -f package-lock.json ]; then npm ci; else npm install; fi
 fi
 
 # Create/overwrite a PM2 ecosystem to manage both apps cleanly
