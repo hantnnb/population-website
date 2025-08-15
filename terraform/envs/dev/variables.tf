@@ -11,11 +11,17 @@ variable "machine_type" {}
 variable "image_family" {}
 variable "image_project" {}
 variable "startup_file" {}
-variable "env_file" {}
-variable "env_backend" {}
+variable "env_file" { 
+    sensitive = true
+}
+variable "env_backend" {
+    sensitive = true
+}
 
 #Cloudflare
-variable "cloudflare_api_token" {}
+variable "cloudflare_api_token" {
+    sensitive = true
+}
 variable "zone_id" {}
 variable "root_domain" {}
 variable "cloudflare_account_id" {}

@@ -84,12 +84,14 @@ module "client_dns" {
   # When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.
 }
 
+# If orange cloud for third‑level hostname (a subdomain of pplt-dev.vitlab.site)
+# Need to pay Cloudflare for Advanced Certificate Manager (or Total TLS), issue Edge cert
 module "api_dns" {
   source     = "../../modules/dns_record"
   name       = "api.${local.name_prefix}"
   ip_address = module.vm.vm_ip
   zone_id    = var.zone_id
-  isProxied  = true
+  isProxied  = false
   dns_type   = "A"
-  ttl        = 1
+  ttl        = 300
 }
