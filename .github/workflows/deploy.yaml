@@ -30,7 +30,7 @@ jobs:
             --exclude='node_modules'
             --exclude='.venv'
             --exclude='venv'
-            --filter='P ecosystem.config.js'   # <- protect dest file from deletion
+            --filter='protect ecosystem.config.js'
             --rsync-path="mkdir -p ${{ env.VM_PATH }} && rsync"
           path: ./           # trailing slash copies contents of repo
           remote_path: ${{ env.VM_PATH }}
