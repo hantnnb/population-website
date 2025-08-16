@@ -162,10 +162,3 @@ certbot --nginx --non-interactive --agree-tos \
 
 # Cron renew + reload nginx
 (crontab -l 2>/dev/null; echo "0 2 * * * /usr/bin/certbot renew --quiet --deploy-hook 'systemctl reload nginx'") | crontab -
-
-# CI/CD script (Github Actions) =============================================================
-mkdir -p /home/ubuntu/.ssh
-chmod 700 /home/ubuntu/.ssh
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG2wMl3xL8YatNzZAK1KeZiFdAA5Lc6PyHhY6T2gOXbh gh-actions -> vm" >> /home/ubuntu/.ssh/authorized_keys
-chmod 600 /home/ubuntu/.ssh/authorized_keys
-chown -R ubuntu:ubuntu /home/ubuntu/.ssh

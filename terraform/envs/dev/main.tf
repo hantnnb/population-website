@@ -68,8 +68,13 @@ module "vm" {
   region       = var.region
   network      = module.network.network_id
   subnetwork   = module.network.subnet_id
-  env_file     = var.env_file
-  env_backend  = var.env_backend
+
+  # metadata
+  env_file    = var.env_file
+  env_backend = var.env_backend
+  ssh_pubkey  = file("${path.root}/../../../vm_deploy_key.pub")
+
+  
 
   # let the Terraform SA attach the VM SA
   sa_user_members = [

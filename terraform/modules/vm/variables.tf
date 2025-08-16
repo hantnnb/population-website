@@ -20,3 +20,7 @@ variable "sa_user_members" {
   default     = []
 }
 
+variable "ssh_pubkey" {
+  type        = string
+  description = "Public SSH key contents for ubuntu user"
+}

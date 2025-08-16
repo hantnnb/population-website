@@ -95,7 +95,7 @@
 
 4. Make the deploy.sh executable (one-time on VM)
     ```bash
-    ssh <VM_USER>@<VM_HOST> 'chmod +x /opt/population-website/deploy.sh'
+    ssh <VM_USER>@<VM_HOST> 'chmod +x /opt/population-website/terraform/envs/dev/deploy.sh'
 
     # If permission denied, do the following:
     gcloud compute ssh <VM_NAME> --zone=<ZONE>
@@ -107,5 +107,4 @@
     # Go back to your terminal or cloudshell to run this:
     ssh -i vm_deploy_key ubuntu@<VM_IP>
     ```
-
 5. Add Github Actions workflow `.github/workflows/deploy.yml`
