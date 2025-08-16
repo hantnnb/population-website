@@ -7,7 +7,8 @@ apt-get update && apt-get install -y \
   python3 python3-pip python3-venv git build-essential \
   libgeos-dev libproj-dev gdal-bin libgdal-dev \
   curl nginx software-properties-common \
-  certbot python3-certbot-nginx
+  certbot python3-certbot-nginx \
+  nodejs npm rsync 
 
 # Symlink python - shortcut python = python3
 ln -sf /usr/bin/python3 /usr/bin/python
@@ -162,57 +163,9 @@ certbot --nginx --non-interactive --agree-tos \
 # Cron renew + reload nginx
 (crontab -l 2>/dev/null; echo "0 2 * * * /usr/bin/certbot renew --quiet --deploy-hook 'systemctl reload nginx'") | crontab -
 
-# # CI/CD script (Github Actions) =============================================================
-# # Creating the deploy.sh script
-# cat > "$REPO_DIR/deploy.sh" <<'EOF'
-# #!/usr/bin/env bash
-# set -euo pipefail
-
-# REPO_DIR="/opt/population-website"
-# BRANCH="${BRANCH:-stg}"
-
-# if [ ! -d "$REPO_DIR/.git" ]; then
-#   echo "Repo missing at $REPO_DIR" >&2
-#   exit 1
-# fi
-
-# cd "$REPO_DIR"
-# git fetch origin "$BRANCH"
-# git reset --hard "origin/$BRANCH"
-
-# # Refresh envs from metadata
-# curl -s -H "Metadata-Flavor: Google" \
-#   http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_file \
-#   -o "$REPO_DIR/population/.env"
-# curl -s -H "Metadata-Flavor: Google" \
-#   http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_backend \
-#   -o "$REPO_DIR/population/backend/.env"
-
-# # Flask deps
-# if [ -d "$REPO_DIR/population" ]; then
-#   cd "$REPO_DIR/population"
-#   if [ ! -d ".venv" ]; then python3 -m venv .venv; fi
-#   source .venv/bin/activate
-#   if [ -f requirements.txt ]; then
-#     pip install --upgrade pip
-#     pip install -r requirements.txt
-#   fi
-#   deactivate
-# fi
-
-# # Backend deps
-# if [ -d "$REPO_DIR/population/backend" ]; then
-#   cd "$REPO_DIR/population/backend"
-#   if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
-# fi
-
-# # Reload for both apps
-# cd "$REPO_DIR"
-# pm2 startOrReload ecosystem.config.js
-# pm2 save
-# EOF
-
-# chmod +x "$REPO_DIR/deploy.sh"
-# chown ubuntu:ubuntu "$REPO_DIR/deploy.sh"
-
-
+# CI/CD script (Github Actions) =============================================================
+mkdir -p /home/ubuntu/.ssh
+chmod 700 /home/ubuntu/.ssh
+echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG2wMl3xL8YatNzZAK1KeZiFdAA5Lc6PyHhY6T2gOXbh gh-actions -> vm" >> /home/ubuntu/.ssh/authorized_keys
+chmod 600 /home/ubuntu/.ssh/authorized_keys
+chown -R ubuntu:ubuntu /home/ubuntu/.ssh
