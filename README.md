@@ -64,8 +64,48 @@
     --role=roles/viewer
     ```
 
-5. Clone the repo: git clone https://github.com/hantnnb/population-website.git
-6. Add your tfvars file to terraform/envs/ENVIRONMENT
+5. Clone the repo: `git clone https://github.com/hantnnb/population-website.git`
+6. Add your tfvars file to `terraform/envs/<ENVIRONMENT>`
 7. Replace hardcoded variables with your own values
-8. Change into terraform/envs/ENVIRONMENT dir and run `terraform init`
+8. Change into `terraform/envs/<ENVIRONMENT>` directory and run `terraform init`s
 9. Run `terraform apply`
+
+## Github Actions
+1. Generate SSH key for Github -> VM and add the public key to VM's authorized_keys
+    ```bash
+    # Generate a key
+    ssh-keygen -t ed25519 -C "gh-actions -> vm" -f ./vm_deploy_key -N ""
+
+    # Copy public key to VM's ~/.ssh/authorized_keys
+    cat vm_deploy_key.pub | ssh <VM_USER>@<VM_IP> 'mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys'
+
+    # Clean up SSH's known_hosts files (if prompt):
+    ssh-keygen -f "/home/<YOUR_GG_USERNAME>/.ssh/known_hosts" -R "<VM_IP>"
+    ```
+
+2. Add Github Action secrets (manully in repo Settings -> Secrets -> Actions)
+    * VM_HOST: <VM_IP> (or your DNS)
+    * VM_USER: <VM_USER>
+    * VM_PATH: <PATH_TO_REPO> (e.g., /opt/population-website)
+    * VM_SSH_KEY: <VM_DEPLOY_KEY> (private key)
+
+3. Create a deploy.sh script (so YAML stay cleans), put it in:
+    * Root directory for a centralize script
+    * OR terraform/envs/dev directory for separate environment, but need to duplicate for other environments
+
+4. Make the deploy.sh executable (one-time on VM)
+    ```bash
+    ssh <VM_USER>@<VM_HOST> 'chmod +x /opt/population-website/deploy.sh'
+
+    # If permission denied, do the following:
+    gcloud compute ssh <VM_NAME> --zone=<ZONE>
+    sudo -u ubuntu mkdir -p /home/ubuntu/.ssh
+    sudo -u ubuntu chmod 700 /home/ubuntu/.ssh
+    echo "<contents of vm_deploy_key.pub>" | sudo tee -a /home/ubuntu/.ssh/authorized_keys
+    sudo -u ubuntu chmod 600 /home/ubuntu/.ssh/authorized_keys
+
+    # Go back to your terminal or cloudshell to run this:
+    ssh -i vm_deploy_key ubuntu@<VM_IP>
+    ```
+
+5. Add Github Actions workflow `.github/workflows/deploy.yml`

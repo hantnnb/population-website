@@ -31,7 +31,8 @@ key.json
 # === OS / Misc ===
 .DS_Store
 Thumbs.db
+
 # === Private Key ===
 id_rsa_*
-github_actions_key
-github_actions_key.pub
+vm_deploy_key
+vm_deploy_key.pub
