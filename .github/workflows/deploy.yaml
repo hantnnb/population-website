@@ -24,7 +24,7 @@ jobs:
           ssh-keyscan -H "$VM_HOST" >> ~/.ssh/known_hosts
 
       - name: Sync files to VM
-        uses: burnett01/rsync-deployments@6.0
+        uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: -avzr --delete \
             --exclude '.git*' \
