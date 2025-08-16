@@ -32,5 +32,5 @@ if [ -d population/backend ]; then
 fi
 
 # PM2 reload =============================================================
-pm2 startOrReload ecosystem.config.js
+pm2 startOrReload "$REPO_DIR/ecosystem.config.js"
 pm2 save
