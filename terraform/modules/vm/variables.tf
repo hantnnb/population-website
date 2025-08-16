@@ -1,16 +1,22 @@
-variable "region" {}
-variable "zone" {}
+variable "region" { type = string }
+variable "zone" { type = string }
 
-variable "machine_type" {}
-variable "image_family" {}
-variable "image_project" {}
+variable "machine_type" { type = string }
+variable "image_family" { type = string }
+variable "image_project" { type = string }
 
-variable "environment" {}
-variable "name_prefix" {}
-variable "startup_file" {}
-variable "env_file" {}
-variable "env_backend" {}
+variable "environment" { type = string }
+variable "name_prefix" { type = string }
+variable "startup_file" { type = string }
+variable "env_file" { type = string }
+variable "env_backend" { type = string }
 
-variable "network" {}
-variable "subnetwork" {}
+variable "network" { type = string }
+variable "subnetwork" { type = string }
+
+variable "sa_user_members" {
+  description = "Members that can use this SA on instances (roles/iam.serviceAccountUser)."
+  type        = list(string)
+  default     = []
+}
 
