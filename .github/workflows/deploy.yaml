@@ -1,0 +1,45 @@
+name: Deploy to VM
+
+# Trigger this workflow when code is pushed to branch stg
+on:
+  push:
+    branches: ["stg"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      # Manually added to Github Actions secrets
+      VM_HOST: ${{ secrets.VM_HOST }}
+      VM_USER: ${{ secrets.VM_USER }}
+      VM_PATH: ${{ secrets.VM_PATH }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Add VM to known_hosts (skip manual SSH prompt)
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$VM_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync files to VM
+        uses: burnett01/rsync-deployments@6.0
+        with:
+          switches: -avzr --delete \
+            --exclude '.git*' \
+            --exclude 'node_modules' \
+            --exclude '.venv' --exclude 'venv'
+          path: ./
+          remote_path: ${{ env.VM_PATH }}
+          remote_host: ${{ env.VM_HOST }}
+          remote_user: ${{ env.VM_USER }}
+          remote_key: ${{ secrets.VM_SSH_KEY }}
+
+      - name: Run deploy.sh on VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.VM_HOST }}
+          username: ${{ env.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: "bash /opt/population-website/terraform/envs/dev/deploy.sh"

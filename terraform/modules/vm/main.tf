@@ -1,7 +1,15 @@
-resource "google_service_account" "vm-sa" {
+resource "google_service_account" "vm_sa" {
   account_id   = "${var.name_prefix}-vm-sa"
   display_name = "Custom SA for VM Instance"
-  # member = "serviceAccount:${google_service_account.vm-sa.email}"
+  # member = "serviceAccount:${google_service_account.vm_sa.email}"
+}
+
+# Allow callers to use/attach this SA
+resource "google_service_account_iam_member" "sa_users" {
+  for_each           = toset(var.sa_user_members)
+  service_account_id = google_service_account.vm_sa.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = each.value
 }
 
 data "google_compute_image" "ubuntu" {
@@ -10,12 +18,12 @@ data "google_compute_image" "ubuntu" {
 }
 
 # Reserved static eip
-resource "google_compute_address" "static-eip" {
+resource "google_compute_address" "static_eip" {
   name   = "${var.name_prefix}-ip"
   region = var.region
 }
 
-resource "google_compute_instance" "vm-instance" {
+resource "google_compute_instance" "vm_instance" {
   name         = "${var.name_prefix}-vm"
   machine_type = var.machine_type
   zone         = var.zone
@@ -33,7 +41,7 @@ resource "google_compute_instance" "vm-instance" {
     subnetwork = var.subnetwork
 
     access_config {
-      nat_ip = google_compute_address.static-eip.address
+      nat_ip = google_compute_address.static_eip.address
     }
   }
 
@@ -45,10 +53,10 @@ resource "google_compute_instance" "vm-instance" {
   metadata_startup_script = file("${path.module}/../../envs/dev/${var.startup_file}")
 
   service_account {
-    email  = google_service_account.vm-sa.email
+    email  = google_service_account.vm_sa.email
     scopes = ["cloud-platform"]
   }
 
   # Explicit dependency to service account
-  depends_on = [google_service_account.vm-sa]
+  depends_on = [google_service_account.vm_sa]
 }
