@@ -74,8 +74,6 @@ module "vm" {
   env_backend = var.env_backend
   ssh_pubkey  = file("${path.root}/../../../vm_deploy_key.pub")
 
-  
-
   # let the Terraform SA attach the VM SA
   sa_user_members = [
     "serviceAccount:terraform@population-website.iam.gserviceaccount.com"

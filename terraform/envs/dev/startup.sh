@@ -25,15 +25,17 @@ npm install -g pm2@latest
 REPO_DIR="/opt/population-website"
 BRANCH="stg"
 
-# Check if repo exists, clone if not, update if existed
+mkdir -p "$REPO_DIR"
+chown -R ubuntu:ubuntu "$REPO_DIR"
+
 if [ ! -d "$REPO_DIR/.git" ]; then
-  git clone -b "$BRANCH" https://github.com/hantnnb/population-website.git "$REPO_DIR"
-  chown -R ubuntu:ubuntu "$REPO_DIR"
+  sudo -u ubuntu bash -lc "git clone -b '$BRANCH' https://github.com/hantnnb/population-website.git '$REPO_DIR'"
 else
-  pushd "$REPO_DIR"
-  git fetch origin "$BRANCH"
-  git reset --hard "origin/$BRANCH"
-  popd
+  sudo -u ubuntu bash -lc "
+    cd '$REPO_DIR' &&
+    git fetch origin '$BRANCH' &&
+    git reset --hard 'origin/$BRANCH'
+  "
 fi
 
 # Inject env files from vm metadata =============================================================
