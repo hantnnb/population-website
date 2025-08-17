@@ -4,6 +4,10 @@ REPO_DIR="/opt/population-website"
 
 cd "$REPO_DIR"
 
+# 🔹 Pull latest code =====================================================
+git fetch origin stg
+git reset --hard origin/stg
+
 # Refresh env files =======================================================
 # Flask app env
 curl -s -H "Metadata-Flavor: Google" \
