@@ -157,10 +157,10 @@ nginx -t
 systemctl reload nginx
 
 # TLS (Let's Encrypt) =============================================================
-certbot --nginx --non-interactive --agree-tos \
+certbot --nginx --staging --non-interactive --agree-tos \
   -m han.tnnb@gmail.com \
   -d pplt-dev.vitlab.site \
   -d api.pplt-dev.vitlab.site
 
 # Cron renew + reload nginx
-(crontab -l 2>/dev/null; echo "0 2 * * * /usr/bin/certbot renew --quiet --deploy-hook 'systemctl reload nginx'") | crontab -
+(crontab -l 2>/dev/null; echo "0 2 * * * /usr/bin/certbot renew --staging --quiet --deploy-hook 'systemctl reload nginx'") | crontab -
