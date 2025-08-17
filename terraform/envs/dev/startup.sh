@@ -52,6 +52,12 @@ curl -s -H "Metadata-Flavor: Google" \
   http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_backend \
   -o "$REPO_DIR/population/backend/.env"
 
+# Key
+curl -s -H "Metadata-Flavor: Google" \
+  http://metadata.google.internal/computeMetadata/v1/instance/attributes/deploy_key \
+  >> /home/ubuntu/.ssh/authorized_keys 
+
+
 # App setup =============================================================
 sudo -iu ubuntu bash <<'EOSU'
 set -euo pipefail
