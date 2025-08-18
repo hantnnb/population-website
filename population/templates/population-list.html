@@ -43,7 +43,7 @@
 
   async function fetchPopulation(page = 1, search = "") {
     const response = await fetch(
-      `https://api.vnpop.thonh.site/api/populations?page=${page}&limit=5&search=${search}`
+      `https://api.pplt-dev.vitlab.site/api/populations?page=${page}&limit=5&search=${search}`
     );
     const data = await response.json();
 
@@ -219,7 +219,7 @@
       year: parseInt(document.getElementById("year").value),
     };
 
-    let url = `https://api.pplt-dev2.vitlab.site/api/populations/province`;
+    let url = `https://api.pplt-dev.vitlab.site/api/populations/province`;
     let method = "POST";
 
     if (id) {
