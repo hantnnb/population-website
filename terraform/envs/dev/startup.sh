@@ -116,10 +116,10 @@ fi
 
 # Nginx reverse proxies =============================================================
 # Site: pplt-dev.vitlab.site -> Flask (5000)
-cat <<EOF > /etc/nginx/sites-available/pplt-dev2
+cat <<EOF > /etc/nginx/sites-available/pplt-dev
 server {
     listen 80 default_server;
-    server_name pplt-dev2.vitlab.site;
+    server_name pplt-dev.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5000;
@@ -132,13 +132,13 @@ server {
 EOF
 
 # Active website site
-ln -s /etc/nginx/sites-available/pplt-dev2 /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/
 
 # API: api.pplt-dev.vitlab.site -> Node (5001)
-cat <<EOF > /etc/nginx/sites-available/api.pplt-dev2.vitlab.site
+cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site
 server {
     listen 80;
-    server_name api.pplt-dev2.vitlab.site;
+    server_name api.pplt-dev.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5001;
@@ -149,7 +149,7 @@ server {
 }
 EOF
 
-ln -sf /etc/nginx/sites-available/api.pplt-dev2.vitlab.site /etc/nginx/sites-enabled/api.pplt-dev2.vitlab.site
+ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site
 
 # Remove default, test and reload
 rm -f /etc/nginx/sites-enabled/default
@@ -191,7 +191,7 @@ if [ ! -f "$LIVE_DIR/fullchain.pem" ] || [ "$NEAR_EXPIRY" = "true" ]; then
   set +e
   certbot --nginx --non-interactive --agree-tos --keep-until-expiring --reuse-key \
     -m han.tnnb@gmail.com \
-    -d pplt-dev2.vitlab.site -d api.pplt-dev2.vitlab.site \
+    -d pplt-dev.vitlab.site -d api.pplt-dev.vitlab.site \
     $CB_EXTRA
   CB_STATUS=$?
   set -e

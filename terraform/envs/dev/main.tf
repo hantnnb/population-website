@@ -13,7 +13,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "population-website-terraform-state-2"
+    bucket = "population-website-terraform-state"
     prefix = "terraform/state"
   }
 }
@@ -21,7 +21,6 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
-  impersonate_service_account = "terraform@${var.project_id}.iam.gserviceaccount.com"
 }
 
 
@@ -111,7 +110,7 @@ module "api_dns" {
 module "le_cert_bucket" {
   source      = "../../modules/bucket"
   project_id  = var.project_id
-  bucket_name = "pplt-ssl-backups-2" # Change to use var
+  bucket_name = "pplt-ssl-backups" # Change to use var
   region      = var.region
   vm_sa_email = module.vm.vm_sa_email
 }

@@ -29,9 +29,6 @@
     gcloud storage buckets update gs://<BUCKET_NAME> --public-access-prevention
     gsutil uniformbucketlevelaccess set on gs://<BUCKET_NAME>
 
-
-    population-website-terraform-state-2
-
     # Verify
     gsutil ls -Lb gs://<BUCKET_NAME> | egrep 'Uniform bucket-level access|Public access prevention|Versioning'
     ```
@@ -53,10 +50,10 @@
 
     # Tell Cloud SDK / client libraries (Terraform provider, GCS backend) to impersonate the above SA when making APIs 
     # Avoid using your Gmail identity 
-    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=terraform@population-website-2.iam.gserviceaccount.com
+    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=terraform@<PROJECT_ID>.iam.gserviceaccount.com
 
     # OR (if local): Powershell
-    $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@population-website-2.iam.gserviceaccount.com"
+    $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@<PROJECT_ID>.iam.gserviceaccount.com"
     ```
     (Optional) If CMEK is enable, you have to allow KMS encrypt/decrypt
 
