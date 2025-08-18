@@ -56,7 +56,7 @@ resource "google_compute_instance" "vm_instance" {
     block-project-ssh-keys = "TRUE" # optional: ignore project-wide keys
   }
 
-  metadata_startup_script = file("${path.module}/../../envs/dev/${var.startup_file}")
+  metadata_startup_script = var.startup_script_content
 
   service_account {
     email  = google_service_account.vm_sa.email

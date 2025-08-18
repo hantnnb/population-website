@@ -8,6 +8,10 @@ variable "image_project" { type = string }
 variable "environment" { type = string }
 variable "name_prefix" { type = string }
 variable "startup_file" { type = string }
+variable "startup_script_content" {
+  description = "Full contents of the startup script"
+  type        = string
+}
 variable "env_file" { type = string }
 variable "env_backend" { type = string }
 
@@ -24,3 +28,4 @@ variable "ssh_pubkey" {
   type        = string
   description = "Public SSH key contents for ubuntu user"
 }
+

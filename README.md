@@ -29,6 +29,9 @@
     gcloud storage buckets update gs://<BUCKET_NAME> --public-access-prevention
     gsutil uniformbucketlevelaccess set on gs://<BUCKET_NAME>
 
+
+    population-website-terraform-state-2
+
     # Verify
     gsutil ls -Lb gs://<BUCKET_NAME> | egrep 'Uniform bucket-level access|Public access prevention|Versioning'
     ```
@@ -49,8 +52,11 @@
     --role="roles/iam.serviceAccountTokenCreator"
 
     # Tell Cloud SDK / client libraries (Terraform provider, GCS backend) to impersonate the above SA when making APIs 
-    # Avoid using your Gmail identity
-    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=terraform@population-website.iam.gserviceaccount.com
+    # Avoid using your Gmail identity 
+    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=terraform@population-website-2.iam.gserviceaccount.com
+
+    # OR (if local): Powershell
+    $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@population-website-2.iam.gserviceaccount.com"
     ```
     (Optional) If CMEK is enable, you have to allow KMS encrypt/decrypt
 
@@ -100,3 +106,17 @@
     ssh-keygen -t ed25519 -C "gh-actions -> vm" -f ./vm_deploy_key -N ""
 
 2. Add Github Actions workflow `.github/workflows/deploy.yml`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
