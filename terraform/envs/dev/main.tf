@@ -13,7 +13,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "population-website-terraform-state"
+    bucket = "population-website-terraform-state-2"
     prefix = "terraform/state"
   }
 }
@@ -21,6 +21,7 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
+  impersonate_service_account = "terraform@${var.project_id}.iam.gserviceaccount.com"
 }
 
 
@@ -74,6 +75,8 @@ module "vm" {
   env_backend = var.env_backend
   ssh_pubkey  = file("${path.root}/../../../vm_deploy_key.pub")
 
+  startup_script_content = file("${path.module}/${var.startup_file}")
+
   # let the Terraform SA attach the VM SA
   sa_user_members = [
     "serviceAccount:terraform@population-website.iam.gserviceaccount.com"
@@ -108,7 +111,7 @@ module "api_dns" {
 module "le_cert_bucket" {
   source      = "../../modules/bucket"
   project_id  = var.project_id
-  bucket_name = "pplt-ssl-backups"          
-  region    = var.region                   
+  bucket_name = "pplt-ssl-backups-2" # Change to use var
+  region      = var.region
   vm_sa_email = module.vm.vm_sa_email
 }

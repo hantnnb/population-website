@@ -25,3 +25,4 @@ variable "cloudflare_api_token" {
 variable "zone_id" {}
 variable "root_domain" {}
 variable "cloudflare_account_id" {}
+
