@@ -104,3 +104,11 @@ module "api_dns" {
   dns_type   = "A"
   ttl        = 300
 }
+
+module "le_cert_bucket" {
+  source      = "../../modules/bucket"
+  project_id  = var.project_id
+  bucket_name = "pplt-ssl-backups"          
+  region    = var.region                   
+  vm_sa_email = module.vm.vm_sa_email
+}
