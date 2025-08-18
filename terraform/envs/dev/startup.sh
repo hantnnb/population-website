@@ -23,7 +23,7 @@ npm install -g pm2@latest
 
 # Cloning Code =================================================================================
 REPO_DIR="/opt/population-website"
-BRANCH="stg"
+BRANCH="stg-new-project"
 
 mkdir -p "$REPO_DIR"
 chown -R ubuntu:ubuntu "$REPO_DIR"
@@ -167,12 +167,12 @@ if ! command -v gsutil >/dev/null 2>&1; then
 fi
 
 # Restore certs from GCS 
-GCS_BUCKET="gs://pplt-ssl-backups/letsencrypt"   # append /letsencrypt prefix
+GCS_BUCKET="gs://pplt-ssl-backups-2/letsencrypt"   # append /letsencrypt prefix
 mkdir -p /etc/letsencrypt
 gsutil -m rsync -r "$GCS_BUCKET/" /etc/letsencrypt/ || true
 
 # === Issue only if needed =================================
-LIVE_DIR=/etc/letsencrypt/live/pplt-dev.vitlab.site
+LIVE_DIR=/etc/letsencrypt/live/pplt-dev2.vitlab.site
 NEAR_EXPIRY=false
 if [ -f "$LIVE_DIR/fullchain.pem" ]; then
   if ! openssl x509 -in "$LIVE_DIR/fullchain.pem" -noout -checkend $((30*24*3600)) >/dev/null 2>&1; then
