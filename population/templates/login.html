@@ -30,7 +30,7 @@ content %}
 
       try {
         const response = await fetch(
-          `https://api.pplt-dev.vitlab.site/api/users/login`,
+          `https://api.pplt-prod.vitlab.site/api/users/login`,
           {
             // ⚠️ Đổi đúng cổng Node.js
             method: "POST",
@@ -68,7 +68,7 @@ content %}
 
     try {
       const response = await fetch(
-        `https://api.pplt-dev.vitlab.site/api/users/profile`,
+        `https://api.pplt-prod.vitlab.site/api/users/profile`,
         {
           // ⚠️ Đổi đúng cổng API
           method: "GET",

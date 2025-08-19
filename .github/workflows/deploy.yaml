@@ -1,15 +1,13 @@
 name: Deploy to VM
 
-# Trigger this workflow when code is pushed to branch stg
 on:
   push:
-    branches: ["stg"]
+    branches: ["main"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      # Manually added to Github Actions secrets
       VM_HOST: ${{ secrets.VM_HOST }}
       VM_USER: ${{ secrets.VM_USER }}
       VM_PATH: ${{ secrets.VM_PATH }}
@@ -24,13 +22,17 @@ jobs:
           ssh-keyscan -H "$VM_HOST" >> ~/.ssh/known_hosts
 
       - name: Sync files to VM
-        uses: burnett01/rsync-deployments@6.0
+        uses: burnett01/rsync-deployments@7.0.2
         with:
-          switches: -avzr --delete \
-            --exclude '.git*' \
-            --exclude 'node_modules' \
-            --exclude '.venv' --exclude 'venv'
-          path: ./
+          switches: >-
+            -azv --delete
+            --exclude='.git*'
+            --exclude='node_modules'
+            --exclude='.venv'
+            --exclude='venv'
+            --filter='protect ecosystem.config.js'
+            --rsync-path="mkdir -p ${{ env.VM_PATH }} && rsync"
+          path: ./           # trailing slash copies contents of repo
           remote_path: ${{ env.VM_PATH }}
           remote_host: ${{ env.VM_HOST }}
           remote_user: ${{ env.VM_USER }}
@@ -42,4 +44,4 @@ jobs:
           host: ${{ env.VM_HOST }}
           username: ${{ env.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          script: "bash /opt/population-website/terraform/envs/dev/deploy.sh"
+          script: bash ${{ env.VM_PATH }}/terraform/envs/prod/deploy.sh

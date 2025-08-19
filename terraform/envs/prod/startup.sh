@@ -23,7 +23,7 @@ npm install -g pm2@latest
 
 # Cloning Code =================================================================================
 REPO_DIR="/opt/population-website"
-BRANCH="stg"
+BRANCH="main"
 
 mkdir -p "$REPO_DIR"
 chown -R ubuntu:ubuntu "$REPO_DIR"
@@ -115,11 +115,11 @@ if grep -q "sudo" /tmp/pm2_inst.txt 2>/dev/null; then
 fi
 
 # Nginx reverse proxies =============================================================
-# Site: pplt-dev.vitlab.site -> Flask (5000)
-cat <<EOF > /etc/nginx/sites-available/pplt-dev
+# Site: pplt-prod.vitlab.site -> Flask (5000)
+cat <<EOF > /etc/nginx/sites-available/pplt-prod
 server {
     listen 80 default_server;
-    server_name pplt-dev.vitlab.site;
+    server_name pplt-prod.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5000;
@@ -132,13 +132,13 @@ server {
 EOF
 
 # Active website site
-ln -sf /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/pplt-dev
+ln -sf /etc/nginx/sites-available/pplt-prod /etc/nginx/sites-enabled/pplt-prod
 
-# API: api.pplt-dev.vitlab.site -> Node (5001)
-cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site
+# API: api.pplt-prod.vitlab.site -> Node (5001)
+cat <<EOF > /etc/nginx/sites-available/api.pplt-prod.vitlab.site
 server {
     listen 80;
-    server_name api.pplt-dev.vitlab.site;
+    server_name api.pplt-prod.vitlab.site;
 
     location / {
         proxy_pass http://127.0.0.1:5001;
@@ -149,7 +149,7 @@ server {
 }
 EOF
 
-ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site
+ln -sf /etc/nginx/sites-available/api.pplt-prod.vitlab.site /etc/nginx/sites-enabled/api.pplt-prod.vitlab.site
 
 # Remove default, test and reload
 rm -f /etc/nginx/sites-enabled/default
@@ -167,12 +167,12 @@ if ! command -v gsutil >/dev/null 2>&1; then
 fi
 
 # Restore certs from GCS
-GCS_BUCKET="gs://pplt-ssl-backups/letsencrypt"
+GCS_BUCKET="gs://prod-pplt-ssl-backups/letsencrypt"
 mkdir -p /etc/letsencrypt
 gsutil -m rsync -r "$GCS_BUCKET/" /etc/letsencrypt/ || true
 
 # Domain / live paths (safe with set -u)
-DOMAIN="pplt-dev.vitlab.site"
+DOMAIN="pplt-prod.vitlab.site"
 : "${LIVE_DIR:=/etc/letsencrypt/live/${DOMAIN}}"
 
 # === Issue only if needed =================================
@@ -206,7 +206,7 @@ fi
 # === Wire Nginx to use existing certs  ====================
 if [ -f "$LIVE_DIR/fullchain.pem" ] && [ -f "$LIVE_DIR/privkey.pem" ]; then
   # 80 -> 443 redirects
-  cat > /etc/nginx/sites-available/pplt-dev <<EOF
+  cat > /etc/nginx/sites-available/pplt-prod <<EOF
 server {
     listen 80 default_server;
     server_name ${DOMAIN};
@@ -214,16 +214,16 @@ server {
 }
 EOF
 
-  cat > /etc/nginx/sites-available/api.pplt-dev.vitlab.site <<'EOF'
+  cat > /etc/nginx/sites-available/api.pplt-prod.vitlab.site <<'EOF'
 server {
     listen 80;
-    server_name api.pplt-dev.vitlab.site;
+    server_name api.pplt-prod.vitlab.site;
     return 301 https://$host$request_uri;
 }
 EOF
 
   # 443 SSL backends
-  cat > /etc/nginx/sites-available/pplt-dev-ssl <<EOF
+  cat > /etc/nginx/sites-available/pplt-prod-ssl <<EOF
 server {
     listen 443 ssl http2;
     server_name ${DOMAIN};
@@ -241,7 +241,7 @@ server {
 }
 EOF
 
-  cat > /etc/nginx/sites-available/api.pplt-dev.vitlab.site-ssl <<EOF
+  cat > /etc/nginx/sites-available/api.pplt-prod.vitlab.site-ssl <<EOF
 server {
     listen 443 ssl http2;
     server_name api.${DOMAIN};
@@ -258,10 +258,10 @@ server {
 }
 EOF
 
-  ln -sf /etc/nginx/sites-available/pplt-dev            /etc/nginx/sites-enabled/pplt-dev
-  ln -sf /etc/nginx/sites-available/pplt-dev-ssl        /etc/nginx/sites-enabled/pplt-dev-ssl
-  ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site     /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site
-  ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site-ssl /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site-ssl
+  ln -sf /etc/nginx/sites-available/pplt-prod            /etc/nginx/sites-enabled/pplt-prod
+  ln -sf /etc/nginx/sites-available/pplt-prod-ssl        /etc/nginx/sites-enabled/pplt-prod-ssl
+  ln -sf /etc/nginx/sites-available/api.pplt-prod.vitlab.site     /etc/nginx/sites-enabled/api.pplt-prod.vitlab.site
+  ln -sf /etc/nginx/sites-available/api.pplt-prod.vitlab.site-ssl /etc/nginx/sites-enabled/api.pplt-prod.vitlab.site-ssl
 
   nginx -t
   systemctl reload nginx

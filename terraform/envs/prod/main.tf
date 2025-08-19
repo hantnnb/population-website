@@ -14,7 +14,7 @@ terraform {
 
   backend "gcs" {
     bucket = "population-website-terraform-state"
-    prefix = "terraform/state"
+    prefix = "terraform/prod-state"
   }
 }
 
@@ -95,7 +95,7 @@ module "client_dns" {
   # When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.
 }
 
-# If orange cloud for third‑level hostname (a subdomain of pplt-dev.vitlab.site)
+# If orange cloud for third‑level hostname (a subdomain of pplt-prod.vitlab.site)
 # Need to pay Cloudflare for Advanced Certificate Manager (or Total TLS), issue Edge cert
 module "api_dns" {
   source     = "../../modules/dns_record"
@@ -110,7 +110,7 @@ module "api_dns" {
 module "le_cert_bucket" {
   source      = "../../modules/bucket"
   project_id  = var.project_id
-  bucket_name = "pplt-ssl-backups" # Change to use var
+  bucket_name = "prod-pplt-ssl-backups" # Change to use var
   region      = var.region
   vm_sa_email = module.vm.vm_sa_email
 }

@@ -5,8 +5,8 @@ REPO_DIR="/opt/population-website"
 cd "$REPO_DIR"
 
 # 🔹 Pull latest code =====================================================
-git fetch origin stg
-git reset --hard origin/stg
+git fetch origin main
+git reset --hard origin/main
 
 # Refresh env files =======================================================
 # Flask app env

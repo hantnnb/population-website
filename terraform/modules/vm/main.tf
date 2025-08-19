@@ -21,6 +21,10 @@ data "google_compute_image" "ubuntu" {
 resource "google_compute_address" "static_eip" {
   name   = "${var.name_prefix}-ip"
   region = var.region
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_compute_instance" "vm_instance" {
@@ -46,11 +50,13 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   metadata = {
-    env_file    = var.env_file
-    env_backend = var.env_backend
+    env_file               = var.env_file
+    env_backend            = var.env_backend
+    ssh-keys               = "ubuntu:${var.ssh_pubkey}"
+    block-project-ssh-keys = "TRUE" # optional: ignore project-wide keys
   }
 
-  metadata_startup_script = file("${path.module}/../../envs/dev/${var.startup_file}")
+  metadata_startup_script = var.startup_script_content
 
   service_account {
     email  = google_service_account.vm_sa.email
