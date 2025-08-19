@@ -23,7 +23,7 @@ npm install -g pm2@latest
 
 # Cloning Code =================================================================================
 REPO_DIR="/opt/population-website"
-BRANCH="prod-test"
+BRANCH="main"
 
 mkdir -p "$REPO_DIR"
 chown -R ubuntu:ubuntu "$REPO_DIR"
