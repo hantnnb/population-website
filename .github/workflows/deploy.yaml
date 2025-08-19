@@ -2,7 +2,7 @@ name: Deploy to VM
 
 on:
   push:
-    branches: ["stg"]
+    branches: ["prod-test"]
 
 jobs:
   deploy:
@@ -44,4 +44,4 @@ jobs:
           host: ${{ env.VM_HOST }}
           username: ${{ env.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          script: bash ${{ env.VM_PATH }}/terraform/envs/dev/deploy.sh
+          script: bash ${{ env.VM_PATH }}/terraform/envs/prod/deploy.sh
