@@ -110,7 +110,7 @@ module "api_dns" {
 module "le_cert_bucket" {
   source      = "../../modules/bucket"
   project_id  = var.project_id
-  bucket_name = "PROD-pplt-ssl-backups" # Change to use var
+  bucket_name = "prod-pplt-ssl-backups" # Change to use var
   region      = var.region
   vm_sa_email = module.vm.vm_sa_email
 }

@@ -167,7 +167,7 @@ if ! command -v gsutil >/dev/null 2>&1; then
 fi
 
 # Restore certs from GCS
-GCS_BUCKET="gs://PROD-pplt-ssl-backups/letsencrypt"
+GCS_BUCKET="gs://prod-pplt-ssl-backups/letsencrypt"
 mkdir -p /etc/letsencrypt
 gsutil -m rsync -r "$GCS_BUCKET/" /etc/letsencrypt/ || true
 
