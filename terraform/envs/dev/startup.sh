@@ -132,7 +132,7 @@ server {
 EOF
 
 # Active website site
-ln -s /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/pplt-dev
 
 # API: api.pplt-dev.vitlab.site -> Node (5001)
 cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site
@@ -161,18 +161,21 @@ systemctl reload nginx
 if ! command -v gsutil >/dev/null 2>&1; then
   echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
     | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+  curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg \
     | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
   apt-get update && apt-get install -y google-cloud-cli
 fi
 
-# Restore certs from GCS 
-GCS_BUCKET="gs://pplt-ssl-backups/letsencrypt"   # append /letsencrypt prefix
+# Restore certs from GCS
+GCS_BUCKET="gs://pplt-ssl-backups/letsencrypt"
 mkdir -p /etc/letsencrypt
 gsutil -m rsync -r "$GCS_BUCKET/" /etc/letsencrypt/ || true
 
+# Domain / live paths (safe with set -u)
+DOMAIN="pplt-dev.vitlab.site"
+: "${LIVE_DIR:=/etc/letsencrypt/live/${DOMAIN}}"
+
 # === Issue only if needed =================================
-LIVE_DIR=/etc/letsencrypt/live/pplt-dev.vitlab.site
 NEAR_EXPIRY=false
 if [ -f "$LIVE_DIR/fullchain.pem" ]; then
   if ! openssl x509 -in "$LIVE_DIR/fullchain.pem" -noout -checkend $((30*24*3600)) >/dev/null 2>&1; then
@@ -181,9 +184,9 @@ if [ -f "$LIVE_DIR/fullchain.pem" ]; then
 fi
 
 if [ ! -f "$LIVE_DIR/fullchain.pem" ] || [ "$NEAR_EXPIRY" = "true" ]; then
-  STAGING="${STAGING:-0}"          
+  STAGING="${STAGING:-0}"
   if [ "$STAGING" = "1" ]; then
-    CB_EXTRA="--staging"           
+    CB_EXTRA="--staging"
   else
     CB_EXTRA=""
   fi
@@ -191,7 +194,7 @@ if [ ! -f "$LIVE_DIR/fullchain.pem" ] || [ "$NEAR_EXPIRY" = "true" ]; then
   set +e
   certbot --nginx --non-interactive --agree-tos --keep-until-expiring --reuse-key \
     -m han.tnnb@gmail.com \
-    -d pplt-dev.vitlab.site -d api.pplt-dev.vitlab.site \
+    -d "${DOMAIN}" -d "api.${DOMAIN}" \
     $CB_EXTRA
   CB_STATUS=$?
   set -e
@@ -200,11 +203,76 @@ if [ ! -f "$LIVE_DIR/fullchain.pem" ] || [ "$NEAR_EXPIRY" = "true" ]; then
   fi
 fi
 
+# === Wire Nginx to use existing certs  ====================
+if [ -f "$LIVE_DIR/fullchain.pem" ] && [ -f "$LIVE_DIR/privkey.pem" ]; then
+  # 80 -> 443 redirects
+  cat > /etc/nginx/sites-available/pplt-dev <<EOF
+server {
+    listen 80 default_server;
+    server_name ${DOMAIN};
+    return 301 https://\$host\$request_uri;
+}
+EOF
+
+  cat > /etc/nginx/sites-available/api.pplt-dev.vitlab.site <<'EOF'
+server {
+    listen 80;
+    server_name api.pplt-dev.vitlab.site;
+    return 301 https://$host$request_uri;
+}
+EOF
+
+  # 443 SSL backends
+  cat > /etc/nginx/sites-available/pplt-dev-ssl <<EOF
+server {
+    listen 443 ssl http2;
+    server_name ${DOMAIN};
+
+    ssl_certificate     ${LIVE_DIR}/fullchain.pem;
+    ssl_certificate_key ${LIVE_DIR}/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+
+  cat > /etc/nginx/sites-available/api.pplt-dev.vitlab.site-ssl <<EOF
+server {
+    listen 443 ssl http2;
+    server_name api.${DOMAIN};
+
+    ssl_certificate     ${LIVE_DIR}/fullchain.pem;
+    ssl_certificate_key ${LIVE_DIR}/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5001;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    }
+}
+EOF
+
+  ln -sf /etc/nginx/sites-available/pplt-dev            /etc/nginx/sites-enabled/pplt-dev
+  ln -sf /etc/nginx/sites-available/pplt-dev-ssl        /etc/nginx/sites-enabled/pplt-dev-ssl
+  ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site     /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site
+  ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site-ssl /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site-ssl
+
+  nginx -t
+  systemctl reload nginx
+else
+  echo "WARN: Cert files not found at $LIVE_DIR; HTTPS not enabled yet."
+fi
+
 # === Backup certs to GCS ===============================================
-# Backup certs to GCS 
 gsutil -m rsync -r /etc/letsencrypt/ "$GCS_BUCKET/"
 
-# Renewal cron
+# Renewal cron 
 ( crontab -l 2>/dev/null || true; \
   echo "0 2 * * * /usr/bin/certbot renew --quiet --deploy-hook 'systemctl reload nginx'" \
 ) | crontab -
