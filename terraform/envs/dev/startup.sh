@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# Basic setup =================================================================================
-# Update OS and install system dependencies
+# Basic setup ======================================================================================================================
+# Update OS and install dependencies
 apt-get update && apt-get install -y \
   python3 python3-pip python3-venv git build-essential \
   libgeos-dev libproj-dev gdal-bin libgdal-dev \
@@ -12,22 +12,30 @@ apt-get update && apt-get install -y \
 
 # Symlink python - shortcut python = python3
 ln -sf /usr/bin/python3 /usr/bin/python
-# Add f for idempotent, replace if existed (avoid breaking script if ran multiple times)
+# s = shortcut link, f = force ghi đè nếu link đích đã tồn tại
 
-# Node & PM2 - Add a check to see if node is installed => enhance speed by not reinstalling
+# Node & PM2 - check xem node có tồn tại không (ẩn ouput & error), nếu k thì tải từ NodeSource
 if ! command -v node >/dev/null 2>&1; then
-  curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  curl -fsSL https://deb.nodesource.com/setup_18.x | bash - 
   apt-get install -y nodejs
 fi
 npm install -g pm2@latest
 
-# Cloning Code =================================================================================
+# f = fail silently (nếu HTTP error => không in HTML lỗi)
+# sS = silent + show error => ẩn progress bar + show error nếu có lỗi => tránh loãng output
+# L = follow redirect
+# | bash - → pipe script đó cho bash chạy trực tiếp.
+
+# Cloning Code ===================================================================================================================
+# Đặt biến
 REPO_DIR="/opt/population-website"
 BRANCH="stg"
 
+# Tạo folder để clone code & đổi chủ sang user ubuntu => tránh chạy root
 mkdir -p "$REPO_DIR"
 chown -R ubuntu:ubuntu "$REPO_DIR"
 
+# Check xem folder có repo git chưa => chưa thì clone, rồi thì fetch + reset
 if [ ! -d "$REPO_DIR/.git" ]; then
   sudo -u ubuntu bash -lc "git clone -b '$BRANCH' https://github.com/hantnnb/population-website.git '$REPO_DIR'"
 else
@@ -37,22 +45,24 @@ else
     git reset --hard 'origin/$BRANCH'
   "
 fi
+# reset --hard => ép local branch về đúng trạng thái remote
 
-# Inject env files from vm metadata =============================================================
+# Inject env files from vm metadata =============================================================================================
 # Wait until the folder exists (avoid race condition)
 while [ ! -d /opt/population-website ]; do sleep 1; done
 
-# Flask app env
+# Get Flask app en from instance metadata
 curl -s -H "Metadata-Flavor: Google" \
   http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_file \
   -o "$REPO_DIR/population/.env"
 
-# Node backend env
+# Get Node backend env from instance metadata
 curl -s -H "Metadata-Flavor: Google" \
   http://metadata.google.internal/computeMetadata/v1/instance/attributes/env_backend \
   -o "$REPO_DIR/population/backend/.env"
 
-# App setup =============================================================
+# App setup =====================================================================================================================
+# Đổi sang ubuntu user => tránh root
 sudo -iu ubuntu bash <<'EOSU'
 set -euo pipefail
 REPO_DIR="/opt/population-website"
@@ -100,12 +110,12 @@ module.exports = {
 }
 EOF
 
-# Start or reload both
+# Start or reload app
 cd "$REPO_DIR"
 pm2 startOrReload ecosystem.config.js
 pm2 save
 
-# Enable PM2 on boot (once is enough)
+# Enable PM2 on boot (once is enough) - but not directly
 pm2 startup systemd -u ubuntu --hp /home/ubuntu >/tmp/pm2_inst.txt || true
 EOSU
 
@@ -114,8 +124,8 @@ if grep -q "sudo" /tmp/pm2_inst.txt 2>/dev/null; then
   bash /tmp/pm2_inst.txt || true
 fi
 
-# Nginx reverse proxies =============================================================
-# Site: pplt-dev.vitlab.site -> Flask (5000)
+# Nginx reverse proxies =========================================================================================================
+# Site: pplt-dev.vitlab.site -> Flask (5000) => Nginx đẩy request sang Flask, không cần public port 5000
 cat <<EOF > /etc/nginx/sites-available/pplt-dev
 server {
     listen 80 default_server;
@@ -131,7 +141,7 @@ server {
 }
 EOF
 
-# Active website site
+# Active website site, only sites under sites-enabled can load
 ln -sf /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/pplt-dev
 
 # API: api.pplt-dev.vitlab.site -> Node (5001)
@@ -152,11 +162,11 @@ EOF
 ln -sf /etc/nginx/sites-available/api.pplt-dev.vitlab.site /etc/nginx/sites-enabled/api.pplt-dev.vitlab.site
 
 # Remove default, test and reload
-rm -f /etc/nginx/sites-enabled/default
+rm -f /etc/nginx/sites-enabled/default 
 nginx -t
 systemctl reload nginx
 
-# TLS (Let's Encrypt) =============================================================
+# TLS (Let's Encrypt) ============================================================================================================
 # Install Google Cloud SDK (for gsutil)
 if ! command -v gsutil >/dev/null 2>&1; then
   echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
@@ -175,18 +185,20 @@ gsutil -m rsync -r "$GCS_BUCKET/" /etc/letsencrypt/ || true
 DOMAIN="pplt-dev.vitlab.site"
 : "${LIVE_DIR:=/etc/letsencrypt/live/${DOMAIN}}"
 
-# === Issue only if needed =================================
+# Issue only if needed ======================================================================================================
 NEAR_EXPIRY=false
+# Check if key exist or is expired
 if [ -f "$LIVE_DIR/fullchain.pem" ]; then
   if ! openssl x509 -in "$LIVE_DIR/fullchain.pem" -noout -checkend $((30*24*3600)) >/dev/null 2>&1; then
     NEAR_EXPIRY=true
   fi
 fi
 
+# If not either, check if it's staging or prod => use corresponding cert
 if [ ! -f "$LIVE_DIR/fullchain.pem" ] || [ "$NEAR_EXPIRY" = "true" ]; then
   STAGING="${STAGING:-0}"
   if [ "$STAGING" = "1" ]; then
-    CB_EXTRA="--staging"
+    CB_EXTRA="--staging" 
   else
     CB_EXTRA=""
   fi
@@ -203,7 +215,8 @@ if [ ! -f "$LIVE_DIR/fullchain.pem" ] || [ "$NEAR_EXPIRY" = "true" ]; then
   fi
 fi
 
-# === Wire Nginx to use existing certs  ====================
+# Wire Nginx to use existing certs  ========================================================================================
+# Check if cert exist & enough
 if [ -f "$LIVE_DIR/fullchain.pem" ] && [ -f "$LIVE_DIR/privkey.pem" ]; then
   # 80 -> 443 redirects
   cat > /etc/nginx/sites-available/pplt-dev <<EOF
