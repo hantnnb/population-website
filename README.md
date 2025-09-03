@@ -104,7 +104,17 @@
 
 2. Add Github Actions workflow `.github/workflows/deploy.yml`
 
-
+## Datadog
+### Manual
+1. SSH to VM and run the install commands:
+    ```bash
+    DD_API_KEY=YOUR_KEY \
+    DD_SITE="YOUR_SITE \
+    DD_ENV=dev \
+    bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
+    ```
+2. Change port for datadog if taken
+3. To manage log collection for infrastructure through Terraform: [terraform-gcp-datadog-integration](https://github.com/GoogleCloudPlatform/terraform-gcp-datadog-integration/tree/main) 
 
 
 

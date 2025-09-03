@@ -289,3 +289,5 @@ gsutil -m rsync -r /etc/letsencrypt/ "$GCS_BUCKET/"
 ( crontab -l 2>/dev/null || true; \
   echo "0 2 * * * /usr/bin/certbot renew --quiet --deploy-hook 'systemctl reload nginx'" \
 ) | crontab -
+
+# === Datadog============================================================
