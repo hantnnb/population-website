@@ -98,13 +98,13 @@ module.exports = {
       script: ".venv/bin/gunicorn",
       args: "app:app -b 127.0.0.1:5000 --workers 3 --timeout 90",
       interpreter: "none",
-      env: { NODE_ENV: "production" }
+      env: { NODE_ENV: "staging" }
     },
     {
       name: "backend",
       cwd: "/opt/population-website/population/backend",
       script: "server.js",
-      env: { NODE_ENV: "production", PORT: "5100" }
+      env: { NODE_ENV: "staging", PORT: "5100" }
     }
   ]
 }
