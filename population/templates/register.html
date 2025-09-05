@@ -33,7 +33,7 @@
 </div>
 
 <!-- Google reCAPTCHA v3 --> <!-- Replace with your site key -->
-<script src="https://www.google.com/recaptcha/api.js?render=6LfgL7wrAAAAAIZmQOgKMp6S3iOV9ZnBpVZR-qKZ"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LcrwL0rAAAAANbox1yiVur9yM3gfm9151VbzqmG"></script>
 <script>
   document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -50,9 +50,9 @@
 
     // Replace with your site key
     grecaptcha.ready(async function () {
-      const token = await grecaptcha.execute("6LfgL7wrAAAAAIZmQOgKMp6S3iOV9ZnBpVZR-qKZ", { action: "register" });
+      const token = await grecaptcha.execute("6LcrwL0rAAAAANbox1yiVur9yM3gfm9151VbzqmG", { action: "register" });
 
-      const response = await fetch("https://api.pplt-prod.vitlab.site/api/users/register", {
+      const response = await fetch("https://api.pplt-dev.vitlab.site/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ full_name, email, password, recaptchaResponse: token }),
