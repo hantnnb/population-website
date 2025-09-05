@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "6.47.0"
+      version = "~> 6.47.0"
     }
 
     cloudflare = {
@@ -21,6 +21,7 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
+  impersonate_service_account = "terraform@population-website.iam.gserviceaccount.com"
 }
 
 
@@ -113,4 +114,29 @@ module "le_cert_bucket" {
   bucket_name = "pplt-ssl-backups" # Change to use var
   region      = var.region
   vm_sa_email = module.vm.vm_sa_email
+}
+
+# Datadog
+module "datadog-integration" {
+  source                    = "../../modules/gcp-datadog-module"
+  project_id                = var.project_id
+  dataflow_job_name         = var.dataflow_job_name
+  dataflow_temp_bucket_name = var.dataflow_temp_bucket_name
+  topic_name                = var.topic_name
+  subscription_name         = var.subscription_name
+  vpc_name                  = module.network.vpc_name
+  subnet_name               = module.network.subnet_name
+  subnet_region             = var.region
+  datadog_api_key           = var.datadog_api_key
+  datadog_site_url          = var.datadog_site_url
+  log_sink_in_folder        = false
+  folder_id                 = ""
+  inclusion_filter          = "severity=ERROR"
+}
+
+# Allow VM to read the Datadog API key from Secret Manager
+resource "google_secret_manager_secret_iam_member" "vm_sa_accessor" {
+  secret_id = module.datadog-integration.datadog_api_key_secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${module.vm.vm_sa_email}"
 }

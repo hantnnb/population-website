@@ -29,3 +29,39 @@ variable "ssh_pubkey" {
   description = "Public SSH key contents for ubuntu user"
 }
 
+# Datadog variables ============================================================
+variable "datadog_enabled" {
+  type    = bool
+  default = false
+}
+
+# Required api keys only when datadog is enabled
+variable "datadog_api_key" {
+  type      = string
+  sensitive = true
+  default   = ""
+  validation {
+    condition     = var.datadog_enabled ? length(trim(var.datadog_api_key)) > 0 : true
+    error_message = "datadog_api_key must be set when datadog_enabled = true."
+  }
+}
+
+variable "datadog_site" {
+  type    = string
+  default = "ap1.datadoghq.com"
+}
+
+variable "dd_env" {
+  type    = string
+  default = null
+}
+
+variable "dd_service" {
+  type    = string
+  default = "population-website"
+}
+
+variable "dd_version" {
+  type    = string
+  default = "v1"
+}

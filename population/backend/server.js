@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 });
 
 // Khởi động server
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5100;
 app.listen(PORT, "0.0.0.0", () =>
   console.log(`🚀 Server running on port ${PORT} (Debug Mode)`)
 );

@@ -94,7 +94,7 @@ module.exports = {
       name: "backend",
       cwd: "/opt/population-website/population/backend",
       script: "server.js",
-      env: { NODE_ENV: "production", PORT: "5001" }
+      env: { NODE_ENV: "production", PORT: "5100" }
     }
   ]
 }
@@ -134,14 +134,14 @@ EOF
 # Active website site
 ln -sf /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/pplt-dev
 
-# API: api.pplt-dev.vitlab.site -> Node (5001)
-cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site
+# API: api.pplt-prod.vitlab.site -> Node (5100)
+cat <<EOF > /etc/nginx/sites-available/api.pplt-prod.vitlab.site
 server {
     listen 80;
     server_name api.pplt-dev.vitlab.site;
 
     location / {
-        proxy_pass http://127.0.0.1:5001;
+        proxy_pass http://127.0.0.1:5100;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -250,7 +250,7 @@ server {
     ssl_certificate_key ${LIVE_DIR}/privkey.pem;
 
     location / {
-        proxy_pass http://127.0.0.1:5001;
+        proxy_pass http://127.0.0.1:5100;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
