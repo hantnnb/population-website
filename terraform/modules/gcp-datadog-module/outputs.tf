@@ -31,3 +31,7 @@ output "datadog_subscription_name" {
   description = "The name of the created Pub/Sub subscription."
   value       = google_pubsub_subscription.datadog_topic_sub.name
 }
+
+output "datadog_api_key_secret_id" {
+  value = google_secret_manager_secret.datadog_secret.id
+}

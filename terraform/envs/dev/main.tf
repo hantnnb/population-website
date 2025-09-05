@@ -133,3 +133,10 @@ module "datadog-integration" {
   folder_id                 = ""
   inclusion_filter          = "severity=ERROR"
 }
+
+# Allow VM to read the Datadog API key from Secret Manager
+resource "google_secret_manager_secret_iam_member" "vm_sa_accessor" {
+  secret_id = module.datadog-integration.datadog_api_key_secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${module.vm.vm_sa_email}"
+}

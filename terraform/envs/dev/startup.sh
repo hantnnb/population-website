@@ -104,7 +104,7 @@ module.exports = {
       name: "backend",
       cwd: "/opt/population-website/population/backend",
       script: "server.js",
-      env: { NODE_ENV: "production", PORT: "5001" }
+      env: { NODE_ENV: "production", PORT: "5100" }
     }
   ]
 }
@@ -144,14 +144,14 @@ EOF
 # Active website site, only sites under sites-enabled can load
 ln -sf /etc/nginx/sites-available/pplt-dev /etc/nginx/sites-enabled/pplt-dev
 
-# API: api.pplt-dev.vitlab.site -> Node (5001)
+# API: api.pplt-dev.vitlab.site -> Node (5100)
 cat <<EOF > /etc/nginx/sites-available/api.pplt-dev.vitlab.site
 server {
     listen 80;
     server_name api.pplt-dev.vitlab.site;
 
     location / {
-        proxy_pass http://127.0.0.1:5001;
+        proxy_pass http://127.0.0.1:5100;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -263,7 +263,7 @@ server {
     ssl_certificate_key ${LIVE_DIR}/privkey.pem;
 
     location / {
-        proxy_pass http://127.0.0.1:5001;
+        proxy_pass http://127.0.0.1:5100;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -291,3 +291,17 @@ gsutil -m rsync -r /etc/letsencrypt/ "$GCS_BUCKET/"
 ) | crontab -
 
 # === Datadog============================================================
+DD_SITE="ap1.datadoghq.com"
+DD_SECRET_NAME="datadog-api"
+
+DD_API_KEY="$(gcloud secrets versions access latest --secret="${DD_SECRET_NAME}" 2>/dev/null || true)"
+
+if [ -z "${DD_API_KEY:-}" ]; then
+  echo "ERROR: Could not fetch Datadog API key from Secret Manager."
+  exit 1
+fi
+
+DD_API_KEY="${DD_API_KEY}" DD_SITE="${DD_SITE}" \
+bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
+
+systemctl restart datadog-agent
