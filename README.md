@@ -55,6 +55,8 @@
     # OR (if local): Powershell
     $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@<PROJECT_ID>.iam.gserviceaccount.com"
     ```
+
+    $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@population-website.iam.gserviceaccount.com"
     (Optional) If CMEK is enable, you have to allow KMS encrypt/decrypt
 
 4. Grant project roles Terraform needs
@@ -88,6 +90,29 @@
     gcloud projects add-iam-policy-binding <PROJECT_ID> \
     --member="serviceAccount:terraform@<PROJECT_ID>.iam.gserviceaccount.com" \
     --role="roles/serviceusage.serviceUsageAdmin"
+
+    # Grant IAM admin to terraform SA
+    gcloud projects add-iam-policy-binding population-website \
+    --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" \
+    --role="roles/resourcemanager.projectIamAdmin"
+
+    gcloud iam service-accounts add-iam-policy-binding terraform@population-website.iam.gserviceaccount.com --member="user:saratran2106@gmail.com" --role="roles/iam.serviceAccountTokenCreator"
+
+    gcloud projects add-iam-policy-binding population-website --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/secretmanager.admin"
+
+    gcloud projects add-iam-policy-binding population-website --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/logging.configWriter"
+
+    gcloud projects add-iam-policy-binding population-website --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/pubsub.editor"
+
+    gcloud projects add-iam-policy-binding population-website --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/resourcemanager.projectIamAdmin"
+
+    # Can launch Dataflow jobs
+    gcloud projects add-iam-policy-binding population-website --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/dataflow.developer"
+
+    # Can read/write Pub/Sub IAM (needed if Terraform sets topic/subscription IAM)
+    gcloud projects add-iam-policy-binding population-website --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/pubsub.admin"
+
+    gcloud iam service-accounts add-iam-policy-binding dataflow-datadog-export-sa@population-website.iam.gserviceaccount.com --member="serviceAccount:terraform@population-website.iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
     ```
 
 5. Clone the repo: `git clone https://github.com/hantnnb/population-website.git`
@@ -104,17 +129,7 @@
 
 2. Add Github Actions workflow `.github/workflows/deploy.yml`
 
-## Datadog
-### Manual
-1. SSH to VM and run the install commands:
-    ```bash
-    DD_API_KEY=YOUR_KEY \
-    DD_SITE="YOUR_SITE \
-    DD_ENV=dev \
-    bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
-    ```
-2. Change port for datadog if taken
-3. To manage log collection for infrastructure through Terraform: [terraform-gcp-datadog-integration](https://github.com/GoogleCloudPlatform/terraform-gcp-datadog-integration/tree/main) 
+
 
 
 
