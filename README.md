@@ -61,6 +61,7 @@
    # OR (if local): Powershell
    $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@<PROJECT_ID>.iam.gserviceaccount.com"
    ```
+   $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@population-website.iam.gserviceaccount.com"
 
    (Optional) If CMEK is enable, you have to allow KMS encrypt/decrypt
 
@@ -138,3 +139,16 @@
    ```
 
 2. Add Github Actions workflow `.github/workflows/deploy.yml`
+
+
+## Datadog
+1. Testing log 
+   ```bash
+   # Emit a test few ERROR logs
+   for ($i=1; $i -le 3; $i++) {
+      gcloud logging write datadog-test "pplt test error $i $(Get-Date -Format s)" --severity=ERROR
+      Start-Sleep -Seconds 1
+   }
+
+   # Then check Log Explorer & Datadog Logs
+   ```
