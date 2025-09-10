@@ -66,7 +66,7 @@ jobs:
         env:
           TF_VAR_dd_api_key: ${{ secrets.DD_API_KEY }}
           TF_VAR_dd_app_key: ${{ secrets.DD_APP_KEY }}
-          TF_VAR_dd_site:    ${{ env.DD_SITE }}
+          TF_VAR_datadog_api_url: https://api.${{ secrets.DD_SITE || 'ap1.datadoghq.com' }}
         run: terraform plan -no-color -out=tfplan
 
       - name: Upload plan (PRs only)
@@ -110,5 +110,5 @@ jobs:
         env:
           TF_VAR_dd_api_key: ${{ secrets.DD_API_KEY }}
           TF_VAR_dd_app_key: ${{ secrets.DD_APP_KEY }}
-          TF_VAR_dd_site:    ${{ env.DD_SITE }}
+          TF_VAR_datadog_api_url: https://api.${{ secrets.DD_SITE || 'ap1.datadoghq.com' }}
         run: terraform apply -auto-approve
