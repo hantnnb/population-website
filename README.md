@@ -152,3 +152,42 @@
 
    # Then check Log Explorer & Datadog Logs
    ```
+
+## CI/CD for Datadog
+1. Set environment
+   ```bash
+   $env:PROJECT_ID    = "population-website"
+   $env:POOL_ID       = "github-pool"
+   $env:PROVIDER_ID   = "github-oidc"
+
+   $env:GITHUB_REPO   = "hantnnb/population-website"   
+   $env:GITHUB_BRANCH = "refs/heads/stg"             
+
+   $SA_ID    = "terraform"
+   $SA_EMAIL = "$SA_ID@$PROJECT_ID.iam.gserviceaccount.com"
+   ```
+
+2. Create a Workload Identity Pool & Provider for Github
+   ```bash
+   # Create new Workload Identity Pool (alternative of JSON key)
+   gcloud iam workload-identity-pools create $POOL_ID `
+      --project=$PROJECT_ID --location=global `
+      --display-name="GitHub Actions OIDC Pool"
+
+   # Create a new OIDC Workload Identity Provider under the pool
+   gcloud iam workload-identity-pools providers create-oidc $PROVIDER_ID `
+      --project=$PROJECT_ID --location=global `
+      --workload-identity-pool=$POOL_ID `
+      --issuer-uri="https://token.actions.githubusercontent.com" `
+      --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.actor=assertion.actor,attribute.ref=assertion.ref" `
+      --attribute-condition="assertion.repository == '$REPO' && assertion.ref == '$BRANCH_REF'" `
+      --display-name="GitHub OIDC Provider"
+
+   # Allow identities from Github OIDC provider to impersonate the SA
+   $PROJECT_NUMBER = (gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+
+   gcloud iam service-accounts add-iam-policy-binding $SA_EMAIL `
+      --project=$PROJECT_ID `
+      --role="roles/iam.workloadIdentityUser" `
+      --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL_ID/attribute.repository/$REPO"
+   ```

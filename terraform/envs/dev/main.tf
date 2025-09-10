@@ -10,6 +10,10 @@ terraform {
       version = "5.8.2"
     }
 
+    datadog = {
+      source  = "DataDog/datadog"
+      version = "~> 3.0"
+    }
   }
 
   backend "gcs" {
@@ -19,8 +23,8 @@ terraform {
 }
 
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project                     = var.project_id
+  region                      = var.region
   impersonate_service_account = "terraform@population-website.iam.gserviceaccount.com"
 }
 
@@ -28,6 +32,13 @@ provider "google" {
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
+
+provider "datadog" {
+  api_key = var.datadog_api_key
+  app_key = var.datadog_app_key
+  api_url = var.datadog_api_url
+}
+
 
 locals {
   name_prefix = "${var.app_name}-${var.environment}"
@@ -128,6 +139,7 @@ module "datadog-integration" {
   subnet_name               = module.network.subnet_name
   subnet_region             = var.region
   datadog_api_key           = var.datadog_api_key
+  datadog_app_key           = var.datadog_app_key
   datadog_site_url          = var.datadog_site_url
   log_sink_in_folder        = false
   folder_id                 = ""
@@ -139,4 +151,26 @@ resource "google_secret_manager_secret_iam_member" "vm_sa_accessor" {
   secret_id = module.datadog-integration.datadog_api_key_secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${module.vm.vm_sa_email}"
+}
+
+# Datadog monitor: gce_instance_is_running
+module "datadog_monitor_gce_is_running_dev" {
+  source       = "../../modules/datadog-monitors/gce_instance_is_running"
+  project_id   = var.project_id
+  instance_id  = module.vm.vm_id
+  asset_name   = "${local.name_prefix}-vm"
+  asset_lbnref = local.name_prefix
+  notify_to    = var.email
+
+  template = "gcp-compute_engine"
+  isprod   = "false"
+  severity = "2"
+  category = "compute"
+  kb       = ""
+
+  evaluation_delay  = 900
+  new_host_delay    = 300
+  renotify_interval = 15
+  include_tags      = true
+  full_window       = false
 }
