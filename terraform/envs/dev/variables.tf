@@ -28,46 +28,61 @@ variable "cloudflare_account_id" {}
 
 # Datadog
 variable "dataflow_job_name" {
-  type        = string
-  default     = "datadog-logs-export-job"
+  type    = string
+  default = "datadog-logs-export-job"
 }
 
 variable "dataflow_temp_bucket_name" {
-  type        = string
-  default     = "datadog-temp-bucket"
+  type    = string
+  default = "datadog-temp-bucket"
 }
 
 variable "topic_name" {
-  type        = string
-  default     = "datadog-export-topic"
+  type    = string
+  default = "datadog-export-topic"
 }
 
 variable "subscription_name" {
-  type        = string
-  default     = "datadog-export-sub"
+  type    = string
+  default = "datadog-export-sub"
 }
 
 variable "datadog_api_key" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
+variable "datadog_api_url" {
+  type = string
+}
+
+
+variable "datadog_app_key" {
+  type      = string
+  sensitive = true
+}
+
+
 variable "datadog_site_url" {
-  type        = string
-  default     = "datadoghq.com"
+  type    = string
+  default = "datadoghq.com"
 }
 
 variable "log_sink_in_folder" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 
 variable "folder_id" {
-  type        = string
-  default     = ""
+  type    = string
+  default = ""
 }
 
 variable "inclusion_filter" {
-  type        = string
-  default     = ""
+  type    = string
+  default = ""
+}
+
+variable "email" {
+  type = string
 }

@@ -3,6 +3,11 @@ output "vm_ip" {
   description = "The external static IP of the VM"
 }
 
+output "vm_id" {
+  value       = google_compute_instance.vm_instance.instance_id
+  description = "The numeric ID of the GCE VM"
+}
+
 output "vm_sa_email" {
   value = google_service_account.vm_sa.email
 }

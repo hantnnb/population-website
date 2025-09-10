@@ -62,6 +62,12 @@ variable "datadog_api_key" {
   sensitive   = true
 }
 
+variable "datadog_app_key" {
+  type        = string
+  description = "Datadog API Key for integration."
+  sensitive   = true
+}
+
 variable "datadog_site_url" {
   type        = string
   description = "Datadog Logs API URL, it will depends on the Datadog site region (https://docs.datadoghq.com/integrations/google_cloud_platform/#4-create-and-run-the-dataflow-job)."

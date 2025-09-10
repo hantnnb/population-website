@@ -30,6 +30,6 @@ resource "google_project_service" "enable_apis" {
 
 # Wait for Dataflow 'producer' SA to be created.
 resource "time_sleep" "dataflow_sa_creation" {
-  depends_on = [google_project_service.enable_apis]
+  depends_on      = [google_project_service.enable_apis]
   create_duration = "55s"
 }
