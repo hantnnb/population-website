@@ -1,19 +1,18 @@
 name: Terraform Datadog Monitors (stg)
 
 on:
-  repository_dispatch:
-    types: [testing]
-  
+  push:
+    branches: ["stg", "stg-datadog"]
+    paths:
+      - "terraform/envs/monitors-dev/**"
+      - "terraform/modules/datadog-monitors/**"
+      - ".github/workflows/datadog-monitors.yml" 
   pull_request:
     branches: ["stg"]
     paths:
       - "terraform/envs/monitors-dev/**"
       - "terraform/modules/datadog-monitors/**"
-  push:
-    branches: ["stg"]
-    paths:
-      - "terraform/envs/monitors-dev/**"
-      - "terraform/modules/datadog-monitors/**"
+      - ".github/workflows/datadog-monitors.yml" 
   workflow_dispatch:
 
 permissions:
