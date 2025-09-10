@@ -4,15 +4,15 @@ on:
   push:
     branches: ["stg", "stg-datadog"]
     paths:
-      - "terraform/envs/monitors-dev/**"
+      - "terraform/envs/dev/monitors-dev/**"
       - "terraform/modules/datadog-monitors/**"
-      - ".github/workflows/datadog-monitors.yml" 
+      - ".github/workflows/tf_monitors_dev.yaml" 
   pull_request:
     branches: ["stg"]
     paths:
-      - "terraform/envs/monitors-dev/**"
+      - "terraform/envs/dev/monitors-dev/**"
       - "terraform/modules/datadog-monitors/**"
-      - ".github/workflows/datadog-monitors.yml" 
+      - ".github/workflows/tf_monitors_dev.yaml" 
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ env:
   TF_INPUT: "false"
   GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
   TF_BUCKET: ${{ secrets.TF_BUCKET }}
-  TF_PREFIX: ${{ secrets.TF_PREFIX }}   # e.g. terraform/state/monitors/dev
+  TF_PREFIX: ${{ secrets.TF_PREFIX }}   
   DD_SITE: ${{ secrets.DD_SITE || 'ap1.datadoghq.com' }}
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: terraform/envs/monitors-dev   # <-- change if you use envs/dev
+        working-directory: terraform/envs/dev/monitors-dev  
     steps:
       - uses: actions/checkout@v4
 
@@ -64,9 +64,9 @@ jobs:
 
       - name: Terraform plan
         env:
-          TF_VAR_dd_api_key: ${{ secrets.DD_API_KEY }}
-          TF_VAR_dd_app_key: ${{ secrets.DD_APP_KEY }}
-          TF_VAR_dd_site:    ${{ env.DD_SITE }}
+          TF_VAR_datadog_api_key: ${{ secrets.DD_API_KEY }}
+          TF_VAR_datadog_app_key: ${{ secrets.DD_APP_KEY }}
+          TF_VAR_datadog_api_url: https://api.${{ secrets.DD_SITE || 'ap1.datadoghq.com' }}
         run: terraform plan -no-color -out=tfplan
 
       - name: Upload plan (PRs only)
@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: terraform/envs/monitors-dev/tfplan
+          path: terraform/envs/dev/monitors-dev/tfplan
 
   apply:
     name: Apply
@@ -84,7 +84,7 @@ jobs:
     environment: stg
     defaults:
       run:
-        working-directory: terraform/envs/monitors-dev   # <-- change if you use envs/dev
+        working-directory: terraform/envs/dev/monitors-dev   # <-- change if you use envs/dev
     steps:
       - uses: actions/checkout@v4
 
@@ -108,7 +108,7 @@ jobs:
 
       - name: Terraform apply
         env:
-          TF_VAR_dd_api_key: ${{ secrets.DD_API_KEY }}
-          TF_VAR_dd_app_key: ${{ secrets.DD_APP_KEY }}
-          TF_VAR_dd_site:    ${{ env.DD_SITE }}
+          TF_VAR_datadog_api_key: ${{ secrets.DD_API_KEY }}
+          TF_VAR_datadog_app_key: ${{ secrets.DD_APP_KEY }}
+          TF_VAR_datadog_api_url: https://api.${{ secrets.DD_SITE || 'ap1.datadoghq.com' }}
         run: terraform apply -auto-approve
