@@ -4,13 +4,13 @@ on:
   push:
     branches: ["stg", "stg-datadog"]
     paths:
-      - "terraform/envs/monitors-dev/**"
+      - "terraform/envs/dev/monitors-dev/**"
       - "terraform/modules/datadog-monitors/**"
       - ".github/workflows/tf_monitors_dev.yaml" 
   pull_request:
     branches: ["stg"]
     paths:
-      - "terraform/envs/monitors-dev/**"
+      - "terraform/envs/dev/monitors-dev/**"
       - "terraform/modules/datadog-monitors/**"
       - ".github/workflows/tf_monitors_dev.yaml" 
   workflow_dispatch:
@@ -25,7 +25,7 @@ env:
   TF_INPUT: "false"
   GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
   TF_BUCKET: ${{ secrets.TF_BUCKET }}
-  TF_PREFIX: ${{ secrets.TF_PREFIX }}   # e.g. terraform/state/monitors/dev
+  TF_PREFIX: ${{ secrets.TF_PREFIX }}   
   DD_SITE: ${{ secrets.DD_SITE || 'ap1.datadoghq.com' }}
 
 jobs:
@@ -34,14 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: terraform/envs/monitors-dev   # <-- change if you use envs/dev
+        working-directory: terraform/envs/dev/monitors-dev  
     steps:
       - uses: actions/checkout@v4
-
-      - name: Show repo tree
-        run: |
-          pwd
-          ls -la terraform/envs/monitors-dev || true
 
       - id: auth
         uses: google-github-actions/auth@v2
@@ -79,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: terraform/envs/monitors-dev/tfplan
+          path: terraform/envs/dev/monitors-dev/tfplan
 
   apply:
     name: Apply
@@ -89,7 +84,7 @@ jobs:
     environment: stg
     defaults:
       run:
-        working-directory: terraform/envs/monitors-dev   # <-- change if you use envs/dev
+        working-directory: terraform/envs/dev/monitors-dev   # <-- change if you use envs/dev
     steps:
       - uses: actions/checkout@v4
 
