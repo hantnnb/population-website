@@ -16,7 +16,7 @@ variable "asset_lbnref" {
 
 variable "notify_to" {
   description = "Define webhook to notify"
-  default     = "@webhook-SGCProd @monitoring-teams"
+  default     = "@webhook-discord_webhook"
 }
 
 variable "isprod" {
