@@ -15,27 +15,27 @@ variable "notify" {
   default     = ""
 }
 
-variable "warning_threshold"  { 
-    type = number 
-    default = 85 # percentage
-} 
-
-variable "critical_threshold" { 
-    type = number 
-    default = 95 # percentage
-} 
-
-variable "evaluation_window"  { 
-    type = number 
-    default = 5  # minutes
-} 
-
-variable "renotify_minutes"   { 
-    type = number 
-    default = 60 # minutes
+variable "warning_threshold" {
+  type    = number
+  default = 85 # percentage
 }
 
-variable "no_data_minutes"    { 
-    type = number 
-    default = 10 # minutes
+variable "critical_threshold" {
+  type    = number
+  default = 95 # percentage
+}
+
+variable "evaluation_window" {
+  type    = number
+  default = 5 # minutes
+}
+
+variable "renotify_minutes" {
+  type    = number
+  default = 60 # minutes
+}
+
+variable "no_data_minutes" {
+  type    = number
+  default = 10 # minutes
 }
