@@ -83,6 +83,6 @@ variable "inclusion_filter" {
   default = ""
 }
 
-variable "email" {
+variable "notify_to" {
   type = string
 }

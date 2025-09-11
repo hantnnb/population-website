@@ -160,8 +160,7 @@ module "datadog_monitor_gce_is_running_dev" {
   instance_id  = module.vm.vm_id
   asset_name   = "${local.name_prefix}-vm"
   asset_lbnref = local.name_prefix
-  notify_to    = var.email
-
+  notify_to    = var.notify_to
   template = "gcp-compute_engine"
   isprod   = "false"
   severity = "2"
