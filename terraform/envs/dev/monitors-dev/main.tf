@@ -15,6 +15,6 @@ resource "datadog_webhook" "discord" {
   encode_as      = "json"
   custom_headers = jsonencode({ "custom" : "header" })
   payload = jsonencode({
-    content = "[$ALERT_TITLE]\nType: = $ALERT_TYPE\nLINK = $LINK"
+    content = "[$ALERT_TITLE]\nType: = $ALERT_TYPE\nLink = $LINK"
   })
 }
