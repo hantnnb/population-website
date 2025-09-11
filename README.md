@@ -190,3 +190,4 @@
       --role="roles/iam.workloadIdentityUser" `
       --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL_ID/attribute.repository/$REPO"
    ```
+
