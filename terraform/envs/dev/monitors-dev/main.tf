@@ -10,7 +10,7 @@ module "gce_cpu_high" {
 # Discord webhook
 # Source: https://registry.terraform.io/providers/DataDog/datadog/latest/docs/resources/webhook
 resource "datadog_webhook" "discord" {
-  name           = "${var.name_prefix}-discord-webhook"
+  name           = "discord-webhook"
   url            = var.discord_webhook_url
   encode_as      = "json"
   custom_headers = jsonencode({ "custom" : "header" })
