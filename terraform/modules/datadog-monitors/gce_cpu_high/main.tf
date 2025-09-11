@@ -1,6 +1,6 @@
 # CPU used % = 100 - cpu.idle
 resource "datadog_monitor" "gce_cpu_high" {
-  name = "[${var.env}] GCE CPU usage high"
+  name = "GCE CPU usage high"
   type = "metric alert"
 
   # Example query:
