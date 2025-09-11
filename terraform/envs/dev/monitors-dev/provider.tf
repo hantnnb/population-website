@@ -30,6 +30,10 @@ variable "notify" {
   default = "@your.email@example.com"
 }
 
+variable "name_prefix" {
+  type = string
+}
+
 provider "datadog" {
   api_key = var.datadog_api_key
   app_key = var.datadog_app_key
