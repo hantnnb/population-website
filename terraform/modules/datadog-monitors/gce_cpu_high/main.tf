@@ -14,7 +14,7 @@ resource "datadog_monitor" "gce_cpu_high" {
     ${var.notify}
   EOT
 
-  tags = ["env:${var.env}", "service:gce", "scope:cpu"]
+  tags = ["service:gce", "scope:cpu"]
 
   monitor_thresholds {
     warning  = var.warning_threshold
