@@ -1,6 +1,6 @@
 module "gce_cpu_high" {
   source = "../../../modules/datadog-monitors/gce_cpu_high"
-  env    = "dev"
+  # env    = "dev"
   # tag_filter         = "env:dev" 
   notify             = "${var.notify} @webhook.${datadog_webhook.discord.name}"
   warning_threshold  = 80
