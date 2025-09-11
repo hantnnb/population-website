@@ -3,11 +3,11 @@
 #   default = "dev"
 # }
 
-# variable "tag_filter" {
-#   description = "Extra tag filter added to the query, e.g. env:dev or host:pplt-dev-vm"
-#   type        = string
-#   default     = "env:dev"
-# }
+variable "tag_filter" {
+  description = "Extra tag filter added to the query, e.g. env:dev or host:pplt-dev-vm"
+  type        = string
+  default     = "env:dev"
+}
 
 variable "notify" {
   description = "Who to notify (email + webhook handle)"
