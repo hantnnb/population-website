@@ -20,11 +20,11 @@ resource "datadog_monitor" "gce_cpu_high" {
     critical = var.critical_threshold
   }
 
-  notify_audit        = false
-  notify_no_data      = true
-  no_data_timeframe   = var.no_data_minutes
-  renotify_interval   = var.renotify_minutes
-  escalation_message  = "Sustained CPU pressure on {{host.name}}. ${var.notify}"
+  notify_audit       = false
+  notify_no_data     = true
+  no_data_timeframe  = var.no_data_minutes
+  renotify_interval  = var.renotify_minutes
+  escalation_message = "Sustained CPU pressure on {{host.name}}. ${var.notify}"
 
   include_tags        = true
   require_full_window = true
