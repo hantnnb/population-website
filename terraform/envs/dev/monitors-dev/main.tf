@@ -14,5 +14,7 @@ resource "datadog_webhook" "discord" {
   url            = var.discord_webhook_url
   encode_as      = "json"
   custom_headers = jsonencode({ "custom" : "header" })
-  payload        = jsonencode({ "custom" : "payload" })
+  payload = jsonencode({
+    content = "🚨 Datadog Alert: {{alert_title}}\nState: {{state}}\nMonitor: {{monitor_name}}\nLink: {{link}}"
+  })
 }
