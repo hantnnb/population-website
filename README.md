@@ -61,7 +61,6 @@
    # OR (if local): Powershell
    $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@<PROJECT_ID>.iam.gserviceaccount.com"
    ```
-   $env:GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="terraform@population-website.iam.gserviceaccount.com"
 
    (Optional) If CMEK is enable, you have to allow KMS encrypt/decrypt
 
@@ -191,3 +190,4 @@
       --role="roles/iam.workloadIdentityUser" `
       --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL_ID/attribute.repository/$REPO"
    ```
+
