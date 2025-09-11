@@ -161,11 +161,11 @@ module "datadog_monitor_gce_is_running_dev" {
   asset_name   = "${local.name_prefix}-vm"
   asset_lbnref = local.name_prefix
   notify_to    = var.notify_to
-  template = "gcp-compute_engine"
-  isprod   = "false"
-  severity = "2"
-  category = "compute"
-  kb       = ""
+  template     = "gcp-compute_engine"
+  isprod       = "false"
+  severity     = "2"
+  category     = "compute"
+  kb           = ""
 
   evaluation_delay  = 900
   new_host_delay    = 300
