@@ -27,10 +27,14 @@ variable "datadog_api_url" {
 
 variable "notify" {
   type    = string
-  default = "@your.email@example.com"
+  default = "han.tnnb@gmail.com"
 }
 
 variable "name_prefix" {
+  type = string
+}
+
+variable "discord_webhook_url" {
   type = string
 }
 
