@@ -19,10 +19,6 @@ variable "notify" {
   default = "han.tnnb@gmail.com"
 }
 
-variable "name_prefix" {
-  type = string
-}
-
 variable "discord_webhook_url" {
   type = string
 }
